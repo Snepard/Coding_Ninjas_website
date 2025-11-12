@@ -1,0 +1,18 @@
+<svg width="360" height="360" viewBox="0 0 360 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="360" height="360" rx="180" fill="#111111"/>
+  <g filter="url(#shadow)">
+    <path d="M180 60L216 156L300 180L216 204L180 300L144 204L60 180L144 156L180 60Z" fill="#FF6D00"/>
+    <circle cx="180" cy="180" r="32" fill="#0D0D0D"/>
+    <circle cx="180" cy="180" r="14" fill="white" opacity="0.9"/>
+  </g>
+  <defs>
+    <filter id="shadow" x="48" y="48" width="264" height="264" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feOffset dy="8"/>
+      <feGaussianBlur stdDeviation="12"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+      <feBlend mode="normal" in2="SourceGraphic" result="effect1_dropShadow"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+    </filter>
+  </defs>
+</svg>
+
