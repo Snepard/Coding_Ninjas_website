@@ -69,7 +69,6 @@ export const MissionSection = () => {
         ))}
       </div>
 
-      {/* ✅ OUR FUNDAMENTAL PATHWAY SECTION */}
       <div className="space-y-8">
         <h2 className="text-3xl font-heading font-bold text-center text-foreground">
           OUR FUNDAMENTAL PATHWAY
@@ -83,17 +82,14 @@ export const MissionSection = () => {
               transition={{ duration: 0.3 }}
               className="relative group h-56 rounded-2xl border border-border/50 bg-surface/60 cursor-pointer overflow-hidden flex flex-col items-center justify-center transition-all duration-500 hover:border-orange-500"
             >
-              {/* Icon */}
               <div className="mb-3 transition-all duration-500 group-hover:opacity-0">
                 {step.icon}
               </div>
 
-              {/* Title */}
               <h3 className="text-xl font-bold text-foreground transition-all duration-500 group-hover:opacity-0">
                 {step.title}
               </h3>
 
-              {/* Hover Description */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileHover={{ opacity: 1, y: 0 }}

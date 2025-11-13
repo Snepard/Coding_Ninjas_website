@@ -91,7 +91,6 @@ const TimelineCard = ({
               </h3>
             </div>
 
-            {/* ✅ Image / Placeholder Section */}
             <div className="overflow-hidden rounded-lg border border-white/5 bg-surface/40 relative">
               <Image
                 src={item.image || "/images/sponsors/CNweb.jpg"}

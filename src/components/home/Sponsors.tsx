@@ -6,7 +6,6 @@ import Image from "next/image";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { childFade } from "@/lib/motion";
 
-// ✅ Updated with image paths (make sure these exist in /public/images/sponsors)
 const sponsors = [
   {
     name: "Burger King",
@@ -49,10 +48,9 @@ export const Sponsors = () => {
   const prevSlide = () =>
     setCurrentIndex((prev) => (prev - 1 + sponsors.length) % sponsors.length);
 
-  // 🌀 Auto-rotation (pause on hover)
   useEffect(() => {
     if (isHovered) return;
-    const interval = setInterval(nextSlide, 2500);
+    const interval = setInterval(nextSlide, 1500);
     return () => clearInterval(interval);
   }, [isHovered, currentIndex]);
 
