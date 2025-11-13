@@ -83,8 +83,8 @@ export const Header = () => {
           })}
         </div>
         <div className="hidden lg:flex">
-          <CTAButton href="/#join" trackingId="header-join">
-            Join the Club
+          <CTAButton href="/careers" trackingId="header-join">
+            Join Club
           </CTAButton>
         </div>
         <button
@@ -155,11 +155,11 @@ export const Header = () => {
                 );
               })}
               <CTAButton
-                href="/#join"
+                href="/careers"
                 trackingId="mobile-join"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Join the Club
+                Join Club
               </CTAButton>
             </div>
           </motion.div>

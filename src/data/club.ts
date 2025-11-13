@@ -27,83 +27,65 @@ export const timeline = [
     title: "Coding Ninjas Club Launches",
     description:
       "Campus innovators formed the first cohort, hosting weekly coding meetups focused on clean architecture and design principles.",
+    image: undefined, // Placeholder - will be replaced with actual images
   },
   {
     year: "2018",
     title: "First Major Hackathon Win",
     description:
       "Our cross-disciplinary team won the national Smart India Hackathon with a civic-tech platform deployed to 12 municipalities.",
+    image: undefined,
   },
   {
     year: "2020",
     title: "Global Outreach",
     description:
       "The club pivoted to remote-first programming, mentoring 1,200+ students through bootcamps, livestreams, and community pair-programming.",
+    image: undefined,
   },
   {
     year: "2022",
     title: "Innovation Garage Opens",
     description:
       "We partnered with Chitkara University to launch a rapid prototyping lab featuring robotics, AR/VR sandboxes, and 24/7 support.",
+    image: undefined,
   },
   {
     year: "2024",
     title: "Coding Ninjas Expansion",
     description:
       "Rolled out the Coding Ninjas initiative with specialized pods for AI, Full Stack, and Game Development, doubling our active contributor base.",
+    image: undefined,
   },
   {
     year: "2025",
     title: "Impact at Scale",
     description:
       "Members shipped 18 production apps, mentored 2.4k learners, and were featured in 6 global showcases including GitHub Satellite.",
+    image: undefined,
   },
 ];
 
 export const achievements = [
   {
-    metric: "Active Members",
-    value: 320,
-    suffix: "+",
+    metric: "No. of Events",
+    value: 26,
+    suffix: "",
   },
   {
-    metric: "Community Hours",
-    value: 2400,
-    suffix: "+",
-  },
-  {
-    metric: "Production Projects",
+    metric: "Technical Events",
     value: 18,
     suffix: "",
   },
   {
-    metric: "Hackathon Victories",
-    value: 26,
-    suffix: "",
-  },
-];
-
-export const spotlightProjects = [
-  {
-    title: "Campus Compass",
-    description:
-      "A context-aware campus navigation platform with AR overlays and accessibility routing, rolled out to 8k+ daily users.",
-    tags: ["Next.js", "Mapbox", "Edge Functions"],
-    link: "https://github.com/CodingNinjas-Chitkara/campus-compass",
+    metric: "Speaker Sessions",
+    value: 45,
+    suffix: "+",
   },
   {
-    title: "PulseCast",
-    description:
-      "Real-time event broadcasting tool that synchronizes low-latency livestreams with interactive polls and session analytics.",
-    tags: ["WebRTC", "TypeScript", "Framer Motion"],
-    link: "https://github.com/CodingNinjas-Chitkara/pulsecast",
-  },
-  {
-    title: "Nexus Care",
-    description:
-      "AI-assisted health triage assistant co-created with local clinics, providing multilingual symptom checks and appointment workflows.",
-    tags: ["AI/ML", "React Native", "Azure"],
-    link: "https://github.com/CodingNinjas-Chitkara/nexus-care",
+    metric: "Active Members",
+    value: 320,
+    suffix: "+",
   },
 ];
 

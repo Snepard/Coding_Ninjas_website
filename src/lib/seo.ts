@@ -20,10 +20,9 @@ export const siteConfig = {
 };
 
 export const navigationLinks = [
-  { label: "About", href: "/about" },
-  { label: "Projects", href: "/#projects" },
-  { label: "Timeline", href: "/about#timeline" },
-  { label: "Blog", href: "/blog" },
+  { label: "Home", href: "/" },
+  { label: "About Us", href: "/about" },
+  { label: "Events", href: "/events" },
   { label: "Contact", href: "/contact" },
 ];
 

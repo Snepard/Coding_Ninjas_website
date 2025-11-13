@@ -8,6 +8,7 @@ import { LenisProvider } from "@/providers/LenisProvider";
 import { SkipToContent } from "@/components/shared/SkipToContent";
 import { CookieConsent } from "@/components/shared/CookieConsent";
 import { GuidedTourOverlay } from "@/components/guided-tour/GuidedTourOverlay";
+import { AmbientBackground } from "@/components/global/AmbientBackground";
 import {
   eventsJsonLd,
   getDefaultMetadata,
@@ -43,6 +44,7 @@ export default function RootLayout({
       <body
         className={`${sora.variable} ${inter.variable} bg-background text-foreground antialiased`}
       >
+        <AmbientBackground />
         <SkipToContent />
         <LenisProvider>
           <div className="flex min-h-screen flex-col bg-background">

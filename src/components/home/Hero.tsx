@@ -12,7 +12,7 @@ export const Hero = () => {
   const [isCTAHovered, setIsCTAHovered] = useState(false);
 
   return (
-    <section className="relative pt-40 md:pt-44">
+    <section className="relative pt-12 md:pt-20">
       <div className="container-grid grid items-center gap-16 md:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] md:gap-20">
         <motion.div
           variants={motionDefaults}

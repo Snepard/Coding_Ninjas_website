@@ -49,7 +49,8 @@ export const CTAButton = forwardRef<HTMLButtonElement, CTAButtonProps>(
     ref,
   ) => {
     const sharedClasses = cn(
-      "inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-transform duration-200 focus-visible:outline-none",
+      "inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-200 focus-visible:outline-none",
+      "hover:text-inherit active:text-inherit focus:text-inherit",
       variants[variant],
       className,
     );

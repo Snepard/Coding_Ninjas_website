@@ -1,18 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SectionTitle } from "@/components/ui/SectionTitle";
-import { Timeline } from "@/components/ui/Timeline";
 import { Card } from "@/components/ui/Card";
-import { ProjectCard } from "@/components/ui/ProjectCard";
-import {
-  achievements,
-  coreValues,
-  leadershipTeam,
-  missionStatement,
-  spotlightProjects,
-  timeline,
-  upcomingEvents,
-} from "@/data/club";
+import { AchievementsStrip } from "@/components/home/AchievementsStrip";
+import { coreValues, leadershipTeam, missionStatement } from "@/data/club";
 import { siteConfig } from "@/lib/seo";
 
 export const revalidate = 3600;
@@ -53,47 +44,13 @@ const AboutPage = () => (
       </div>
     </section>
 
-    <section id="timeline" className="container-grid space-y-12">
-      <SectionTitle
-        eyebrow="Timeline"
-        title="From campus idea to global-ready guild"
-        description="Every milestone layered new capabilities — from our first hackathon win to the Coding Ninjas expansion that powers today’s community."
-      />
-      <Timeline items={timeline} />
-    </section>
-
     <section className="container-grid space-y-12">
       <SectionTitle
         eyebrow="Achievements"
         title="Momentum fueled by dedication"
         description="We measure growth by community impact, shipped products, and the people we uplift along the way."
       />
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {achievements.map((achievement) => (
-          <Card key={achievement.metric} className="bg-surface/70">
-            <p className="text-4xl font-heading text-primary">
-              {achievement.value}
-              {achievement.suffix}
-            </p>
-            <p className="mt-3 text-sm uppercase tracking-[0.3em] text-foreground/60">
-              {achievement.metric}
-            </p>
-          </Card>
-        ))}
-      </div>
-    </section>
-
-    <section className="container-grid space-y-12">
-      <SectionTitle
-        eyebrow="Projects"
-        title="Flagship initiatives and showcases"
-        description="Spanning civic innovation, campus experience, and real-time collaboration — these projects demonstrate the Club’s range."
-      />
-      <div className="grid gap-6 lg:grid-cols-3">
-        {spotlightProjects.map((project) => (
-          <ProjectCard key={project.title} {...project} />
-        ))}
-      </div>
+      <AchievementsStrip />
     </section>
 
     <section className="container-grid space-y-12">
@@ -158,48 +115,6 @@ const AboutPage = () => (
                 ))}
               </div>
             </div>
-          </Card>
-        ))}
-      </div>
-    </section>
-
-    <section id="events" className="container-grid space-y-12">
-      <SectionTitle
-        eyebrow="Events"
-        title="What’s happening next"
-        description="Workshops, showcases, and impact sprints designed to accelerate learning and community outcomes."
-      />
-      <div className="grid gap-6 md:grid-cols-2">
-        {upcomingEvents.map((event) => (
-          <Card key={event.name} className="bg-background/80">
-            <p className="text-xs uppercase tracking-[0.3em] text-primary/80">
-              {new Date(event.startDate).toLocaleDateString("en-IN", {
-                month: "short",
-                day: "numeric",
-              })}{" "}
-              —{" "}
-              {new Date(event.endDate).toLocaleDateString("en-IN", {
-                month: "short",
-                day: "numeric",
-              })}
-            </p>
-            <h3 className="mt-3 text-lg font-heading text-foreground">
-              {event.name}
-            </h3>
-            <p className="mt-2 text-sm text-foreground/70">
-              {event.description}
-            </p>
-            <p className="mt-3 text-xs text-foreground/50">
-              {event.location.name} · {event.location.address}
-            </p>
-            <a
-              href={event.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-4 inline-flex text-sm font-semibold text-primary transition hover:text-primary/80"
-            >
-              Event details →
-            </a>
           </Card>
         ))}
       </div>

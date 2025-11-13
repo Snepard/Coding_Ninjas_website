@@ -5,8 +5,8 @@ import { cn } from "@/lib/utils";
 
 const footerLinks = [
   { label: "Join the Club", href: "/#join" },
-  { label: "Events", href: "/about#events" },
-  { label: "Blog", href: "/blog" },
+  { label: "Terms & Conditions", href: "/terms" },
+  { label: "Privacy Policy", href: "/privacy" },
 ];
 
 export const Footer = () => (
