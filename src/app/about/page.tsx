@@ -1,9 +1,15 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Linkedin, Instagram, X, Code, Cpu, Zap, Sparkles, Binary, Terminal, Brain, Users, Calendar, ArrowDown, Sword, Target, Shield, Eye, GitBranch, Cloud, Database, Server, Wifi, WifiOff, Satellite } from "lucide-react";
+import { Linkedin, Instagram, X, Code, BookOpen, Puzzle, Cpu, Zap,Rocket , UsersRound, ShieldCheck , Atom, Sparkles, Binary, Terminal, Brain, Users, Calendar, ArrowDown, Sword, Target, Shield, Eye, GitBranch, Cloud, Database, Server, Wifi, WifiOff, Satellite } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import CountUp from "react-countup";
+import { achievements } from "@/data/club";
+
+
+const achievementIcons = [Rocket, UsersRound, ShieldCheck, Atom];
+
 
 export default function AboutUsPage() {
   const [selectedDirector, setSelectedDirector] = useState<any>(null);
@@ -81,9 +87,9 @@ export default function AboutUsPage() {
       </div>
 
       {/* Advanced Animated Background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <MatrixCodeRain />
-        
+ <div className="fixed inset-0 overflow-hidden pointer-events-none">
+<MatrixCodeRain />
+
         <div 
           className="absolute inset-0 opacity-20"
           style={{
@@ -96,7 +102,7 @@ export default function AboutUsPage() {
           }}
         />
 
-        {[...Array(8)].map((_, i) => (
+        {[...Array(4)].map((_, i) => (
           <NinjaStar key={i} index={i} parallaxX={parallaxX} parallaxY={parallaxY} />
         ))}
 
@@ -108,8 +114,8 @@ export default function AboutUsPage() {
             scale: [1, 1.1, 1]
           }}
           transition={{ 
-            rotate: { duration: 20, repeat: Infinity, ease: "linear" },
-            scale: { duration: 8, repeat: Infinity }
+            rotate: { duration: 40, repeat: Infinity, ease: "linear" }, // Was 20
+            scale: { duration: 15, repeat: Infinity } // Was 8
           }}
           className="absolute top-1/4 left-1/4 w-48 sm:w-96 h-48 sm:h-96 border border-[#FF6C0C] opacity-5 rounded-full"
           style={{ x: parallaxX * 0.5, y: parallaxY * 0.5 }}
@@ -121,8 +127,8 @@ export default function AboutUsPage() {
             scale: [1.1, 1, 1.1]
           }}
           transition={{ 
-            rotate: { duration: 25, repeat: Infinity, ease: "linear" },
-            scale: { duration: 6, repeat: Infinity }
+            rotate: { duration: 50, repeat: Infinity, ease: "linear" }, // Was 25
+            scale: { duration: 12, repeat: Infinity } // Was 6
           }}
           className="absolute bottom-1/4 right-1/4 w-40 sm:w-80 h-40 sm:h-80 border border-[#FF8C3C] opacity-5 rounded-full"
           style={{ x: -parallaxX * 0.3, y: -parallaxY * 0.3 }}
@@ -136,30 +142,20 @@ export default function AboutUsPage() {
             `,
             backgroundSize: '40px 40px',
           }}/>
-        </div>
+      _ </div>
 
-        {Array.from({ length: 15 }, (_, i) => {
+        {Array.from({ length: 5 }, (_, i) => {
           const positions = [
             { left: 5, top: 10, duration: 3.2, delay: 0.4 },
             { left: 15, top: 30, duration: 4.1, delay: 1.2 },
             { left: 25, top: 50, duration: 3.8, delay: 0.8 },
             { left: 35, top: 20, duration: 4.5, delay: 1.6 },
             { left: 45, top: 40, duration: 3.5, delay: 0.2 },
-            { left: 55, top: 60, duration: 4.2, delay: 1.4 },
-            { left: 65, top: 30, duration: 3.9, delay: 0.6 },
-            { left: 75, top: 50, duration: 4.0, delay: 1.8 },
-            { left: 85, top: 70, duration: 3.7, delay: 0.3 },
-            { left: 95, top: 40, duration: 4.3, delay: 1.1 },
-            { left: 10, top: 80, duration: 3.6, delay: 0.9 },
-            { left: 20, top: 60, duration: 4.4, delay: 1.7 },
-            { left: 30, top: 20, duration: 3.4, delay: 0.5 },
-            { left: 40, top: 90, duration: 4.6, delay: 1.3 },
-            { left: 50, top: 70, duration: 3.3, delay: 0.7 }
           ];
           
           const pos = positions[i];
           
-          return (
+        return (
             <motion.div
               key={i}
               className="absolute w-1 h-1 bg-[#FF6C0C] rounded-full opacity-30"
@@ -172,14 +168,14 @@ export default function AboutUsPage() {
                 opacity: [0.3, 0.8, 0.3],
               }}
               transition={{
-                duration: pos.duration,
+                duration: pos.duration * 3, // Was pos.duration
                 repeat: Infinity,
                 delay: pos.delay,
               }}
             />
           );
         })}
-      </div>
+      </div>      
 
       {/* Enhanced Responsive Navigation */}
       {/* <motion.nav 
@@ -222,132 +218,148 @@ export default function AboutUsPage() {
       </motion.nav> */}
 
       {/* Premium Hero Section */}
-      <section id="hero" className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 pt-16 sm:pt-20">
-        <div className="text-center max-w-7xl mx-auto relative w-full">
+<section
+  id="hero"
+  className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 pt-16 sm:pt-20"
+>
+  <div className="text-center max-w-7xl mx-auto relative w-full">
+    <motion.div
+      initial={{ opacity: 0, y: 100 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1.5, ease: "easeOut" }}
+      className="relative z-10"
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="mb-12 sm:mb-16"
+      >
+        <NinjaMantra />
+      </motion.div>
+
+      <motion.div
+        animate={{ rotate: [0, 5, -5, 0], scale: [1, 1.05, 1] }}
+        transition={{
+          rotate: { duration: 8, repeat: Infinity },
+          scale: { duration: 6, repeat: Infinity },
+        }}
+        className="inline-block mb-16 sm:mb-20"
+      >
+        <div className="relative">
           <motion.div
-            initial={{ opacity: 0, y: 100 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.5, ease: "easeOut" }}
-            className="relative z-10"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+            className="w-32 h-32 sm:w-40 sm:h-40 border-4 border-[#FF6C0C] rounded-3xl rotate-45 relative overflow-hidden bg-black/50 backdrop-blur-lg mx-auto"
           >
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="mb-12 sm:mb-16"
-            >
-              <NinjaMantra />
-            </motion.div>
+            <div className="absolute inset-0 bg-gradient-to-br from-[#FF6C0C]/20 to-transparent" />
+            <Sword className="absolute inset-0 m-auto w-12 h-12 sm:w-16 sm:h-16 text-[#FF6C0C] rotate-[-45deg]" />
+          </motion.div>
 
-            <motion.div
-              animate={{ 
-                rotate: [0, 5, -5, 0],
-                scale: [1, 1.05, 1],
-              }}
-              transition={{ 
-                rotate: { duration: 8, repeat: Infinity },
-                scale: { duration: 6, repeat: Infinity }
-              }}
-              className="inline-block mb-16 sm:mb-20"
-            >
-              <div className="relative">
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                  className="w-32 h-32 sm:w-40 sm:h-40 border-4 border-[#FF6C0C] rounded-3xl rotate-45 relative overflow-hidden bg-black/50 backdrop-blur-lg mx-auto"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#FF6C0C]/20 to-transparent" />
-                  <Sword className="absolute inset-0 m-auto w-12 h-12 sm:w-16 sm:h-16 text-[#FF6C0C] rotate-[-45deg]" />
-                </motion.div>
-                
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-                  className="absolute inset-0 m-auto w-40 h-40 sm:w-48 sm:h-48"
-                >
-                  <div className="absolute top-0 left-1/2 w-2 h-2 sm:w-3 sm:h-3 bg-[#FF6C0C] rounded-full transform -translate-x-1/2 -translate-y-1/2" />
-                  <div className="absolute bottom-0 left-1/2 w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#FF8C3C] rounded-full transform -translate-x-1/2 translate-y-1/2" />
-                </motion.div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="relative mb-12 sm:mb-16"
-            >
-              <h1 className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-black mb-8 sm:mb-12 leading-none tracking-tight">
-                <motion.span
-                  initial={{ opacity: 0, y: 80 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.8, duration: 1.2, ease: "easeOut" }}
-                  className="bg-gradient-to-r from-white via-gray-100 to-white bg-clip-text text-transparent block"
-                >
-                  CODING
-                </motion.span>
-                <motion.span
-                  initial={{ opacity: 0, x: -80 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 1.1, duration: 1.2, ease: "easeOut" }}
-                  className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl bg-gradient-to-r from-[#FF6C0C] via-[#FF8C3C] to-[#FF6C0C] bg-clip-text text-transparent block mt-2 sm:mt-4"
-                >
-                  NINJAS
-                </motion.span>
-              </h1>
-
-              <motion.div
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ delay: 1.4, duration: 1.8, ease: "easeOut" }}
-                className="h-1 bg-gradient-to-r from-transparent via-[#FF6C0C] to-transparent mx-auto max-w-2xl sm:max-w-4xl mb-12 sm:mb-16"
-              />
-
-              <motion.p
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.7 }}
-                className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-300 max-w-4xl sm:max-w-5xl mx-auto font-light tracking-wide mb-16 sm:mb-20 leading-relaxed px-4"
-              >
-                Where <span className="text-[#FF6C0C] font-semibold">innovation</span> meets excellence, 
-                crafting the future through <span className="text-[#FF6C0C] font-semibold">code</span> and strategic execution
-              </motion.p>
-
-              <motion.div
-                initial={{ opacity: 0, y: 60 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 2.0 }}
-                className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8 max-w-2xl sm:max-w-4xl mx-auto px-4"
-              >
-                {[
-                  { number: "50+", label: "Missions", icon: Target },
-                  { number: "1.2k", label: "Shinobi", icon: Users },
-                  { number: "25+", label: "Operations", icon: Calendar },
-                  { number: "15+", label: "Technologies", icon: Cpu }
-                ].map((stat, index) => (
-                  <motion.div
-                    key={stat.label}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 2.2 + index * 0.1 }}
-                    whileHover={{ scale: 1.08, y: -8 }}
-                    className="text-center p-4 sm:p-6 md:p-8 bg-white/5 rounded-2xl sm:rounded-3xl border border-white/10 hover:border-[#FF6C0C] transition-all duration-500 backdrop-blur-lg group cursor-pointer"
-                  >
-                    <motion.div
-                      whileHover={{ rotate: 360, scale: 1.2 }}
-                      transition={{ duration: 0.6 }}
-                    >
-                      <stat.icon className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-[#FF6C0C] mx-auto mb-2 sm:mb-4" />
-                    </motion.div>
-                    <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-1 sm:mb-2">{stat.number}</div>
-                    <div className="text-xs sm:text-sm text-gray-400 font-medium uppercase tracking-wider">{stat.label}</div>
-                  </motion.div>
-                ))}
-              </motion.div>
-            </motion.div>
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+            className="absolute inset-0 m-auto w-40 h-40 sm:w-48 sm:h-48"
+          >
+            <div className="absolute top-0 left-1/2 w-2 h-2 sm:w-3 sm:h-3 bg-[#FF6C0C] rounded-full transform -translate-x-1/2 -translate-y-1/2" />
+            <div className="absolute bottom-0 left-1/2 w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#FF8C3C] rounded-full transform -translate-x-1/2 translate-y-1/2" />
           </motion.div>
         </div>
-      </section>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        className="relative mb-12 sm:mb-16"
+      >
+        <h1 className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-black mb-8 sm:mb-12 leading-none tracking-tight">
+          <motion.span
+            initial={{ opacity: 0, y: 80 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 1.2, ease: "easeOut" }}
+            className="bg-gradient-to-r from-white via-gray-100 to-white bg-clip-text text-transparent block"
+          >
+            CODING
+          </motion.span>
+
+          <motion.span
+            initial={{ opacity: 0, x: -80 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 1.1, duration: 1.2, ease: "easeOut" }}
+            className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl bg-gradient-to-r from-[#FF6C0C] via-[#FF8C3C] to-[#FF6C0C] bg-clip-text text-transparent block mt-2 sm:mt-4"
+          >
+            NINJAS
+          </motion.span>
+        </h1>
+
+        <motion.div
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ delay: 1.4, duration: 1.8, ease: "easeOut" }}
+          className="h-1 bg-gradient-to-r from-transparent via-[#FF6C0C] to-transparent mx-auto max-w-2xl sm:max-w-4xl mb-12 sm:mb-16"
+        />
+
+        <motion.p
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.7 }}
+          className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-300 max-w-4xl sm:max-w-5xl mx-auto font-light tracking-wide mb-16 sm:mb-20 leading-relaxed px-4"
+        >
+          Where <span className="text-[#FF6C0C] font-semibold">innovation</span>{" "}
+          meets excellence, crafting the future through{" "}
+          <span className="text-[#FF6C0C] font-semibold">code</span> and
+          strategic execution
+        </motion.p>
+
+        {/* ⭐ ACHIEVEMENTS DATA IN HERO BOXES ⭐ */}
+        <motion.div
+          initial={{ opacity: 0, y: 60 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 2.0 }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8 max-w-2xl sm:max-w-4xl mx-auto px-4"
+        >
+          {achievements.map((item, index) => {
+            const Icon = achievementIcons[index];
+
+            return (
+              <motion.div
+                key={item.metric}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 2.2 + index * 0.1 }}
+                whileHover={{ scale: 1.12, y: -10 }}
+                className="text-center p-4 sm:p-6 md:p-8 bg-white/5 rounded-2xl sm:rounded-3xl border border-white/10 hover:border-[#FF6C0C] transition-all duration-500 backdrop-blur-lg group cursor-pointer"
+              >
+                <motion.div
+                  whileHover={{ rotate: 360, scale: 1.25 }}
+                  transition={{ duration: 0.6 }}
+                  className="flex justify-center mb-3"
+                >
+                  <Icon className="w-10 h-10 text-[#FF6C0C]" />
+                </motion.div>
+
+                <p className="text-4xl font-heading font-semibold text-[#FF6C0C] mb-1">
+                  <CountUp end={item.value} duration={2.4} enableScrollSpy>
+                    {({ countUpRef }) => (
+                      <>
+                        <span ref={countUpRef} /> {item.suffix}
+                      </>
+                    )}
+                  </CountUp>
+                </p>
+
+                <p className="text-xs uppercase tracking-[0.3em] text-gray-400">
+                  {item.metric}
+                </p>
+              </motion.div>
+            );
+          })}
+        </motion.div>
+      </motion.div>
+    </motion.div>
+  </div>
+</section>
 
       {/* Enhanced Foundation Section */}
       <section id="pillars" className="relative py-16 sm:py-20 md:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-black via-gray-950 to-black overflow-hidden">
@@ -649,134 +661,197 @@ export default function AboutUsPage() {
 }
 
 /* NINJA PHILOSOPHY GRID COMPONENT */
+
 function NinjaPhilosophyGrid() {
   const philosophies = [
     {
       title: "ASPIRE",
       description: "Aim for excellence in every line of code. Dream big, code bigger.",
+      Icon: Target,
     },
     {
-      title: "LEARN", 
+      title: "LEARN",
       description: "Continuous growth through challenges. Every bug is a lesson.",
+      Icon: BookOpen,
     },
     {
       title: "SOLVE",
       description: "Transform complex problems into elegant solutions with precision.",
+      Icon: Puzzle,
     },
     {
       title: "INNOVATE",
       description: "Push boundaries and create what doesn't exist. Be the future.",
-    }
+      Icon: Rocket,
+    },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 px-2 sm:px-4">
-      {philosophies.map((philosophy, index) => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 px-2 sm:px-4">
+      {philosophies.map((item, index) => (
         <motion.div
-          key={philosophy.title}
-          initial={{ opacity: 0, y: 60, scale: 0.9 }}
-          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          key={item.title}
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: index * 0.2, duration: 0.7 }}
-          whileHover={{ scale: 1.05, y: -10 }}
-          className="relative group"
+          transition={{ delay: index * 0.15, duration: 0.6 }}
+          className="group"
+          style={{ perspective: "1000px" }}
         >
-          <div className="bg-gradient-to-br from-black to-gray-900 border-2 border-white/10 rounded-2xl sm:rounded-3xl p-6 sm:p-8 h-full text-center hover:border-[#FF6C0C] transition-all duration-500 backdrop-blur-lg">
-            <h3 className="text-xl sm:text-2xl font-bold text-[#FF6C0C] mb-3 sm:mb-4">{philosophy.title}</h3>
-            <p className="text-gray-300 text-xs sm:text-sm leading-relaxed">
-              {philosophy.description}
-            </p>
+          {/* INNER CARD */}
+          <div
+            className="
+              relative h-56 sm:h-64 w-full transition-all duration-700 
+              [transform-style:preserve-3d]
+              group-hover:[transform:rotateY(180deg)]
+            "
+          >
+            {/* FRONT */}
+          {/* FRONT SIDE */}
+<div
+  className="
+    absolute inset-0 
+    rounded-3xl 
+    bg-black/40 
+    backdrop-blur-xl 
+    border border-orange-500/10 
+    shadow-[0_8px_30px_rgba(0,0,0,0.35)]
+    flex flex-col items-center justify-center text-center 
+    p-6
+  "
+  style={{
+    backfaceVisibility: "hidden",
+    WebkitBackfaceVisibility: "hidden",
+    transform: "rotateY(0deg)",
+  }}
+>
+  {/* Icon Wrapper */}
+  <div
+    className="
+      flex items-center justify-center
+      w-16 h-16 rounded-2xl
+      bg-gradient-to-br from-orange-500/20 to-orange-600/10
+      border border-orange-400/20
+      shadow-[0_0_20px_rgba(255,120,0,0.15)]
+      mb-4
+    "
+  >
+    <item.Icon className="w-10 h-10 text-orange-400 drop-shadow-[0_2px_8px_rgba(255,120,0,0.35)]" />
+  </div>
+
+  {/* Title */}
+  <h3 className="text-xl font-semibold tracking-wide text-orange-300">
+    {item.title}
+  </h3>
+
+  {/* Divider */}
+  <div className="w-12 h-[2px] bg-gradient-to-r from-transparent via-orange-400 to-transparent my-3"></div>
+
+ 
+</div>
+
+            {/* BACK */}
+            <div
+              className="absolute inset-0 bg-gradient-to-br from-[#FF6C0C]/30 via-black to-[#FF6C0C]/10 
+              border-2 border-[#FF6C0C]/50 rounded-3xl p-8 text-center flex items-center justify-center 
+              shadow-2xl"
+              style={{
+                backfaceVisibility: "hidden",
+                WebkitBackfaceVisibility: "hidden",
+                transform: "rotateY(180deg)",
+              }}
+            >
+              <p className="text-gray-100 text-base leading-relaxed font-medium">
+                {item.description}
+              </p>
+            </div>
           </div>
-          
-          <div className="absolute inset-0 rounded-2xl sm:rounded-3xl bg-[#FF6C0C] blur-xl opacity-0 group-hover:opacity-20 transition-opacity duration-500 -z-10" />
         </motion.div>
       ))}
     </div>
   );
 }
+
 
 // ... (MatrixCodeRain, NinjaStar, CircuitBoardPattern, NinjaMantra components remain the same with responsive updates)
 
 /* MATRIX CODE RAIN COMPONENT */
 function MatrixCodeRain() {
-  const [isClient, setIsClient] = useState(false);
+   const [isClient, setIsClient] = useState(false);
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+   useEffect(() => {
+      setIsClient(true);
+   }, []);
 
-  if (!isClient) return null;
+   if (!isClient) return null;
 
-  const positions = [
-    { left: 5, delay: 0 }, { left: 15, delay: 2 }, { left: 25, delay: 4 },
-    { left: 35, delay: 1 }, { left: 45, delay: 3 }, { left: 55, delay: 5 },
-    { left: 65, delay: 6 }, { left: 75, delay: 7 }, { left: 85, delay: 8 },
-    { left: 95, delay: 9 }
-  ];
+  {/* --- FIX 6: Reduced number of rain streams from 10 to 5 --- */}
+   const positions = [
+      { left: 10, delay: 0 }, { left: 30, delay: 2 }, { left: 50, delay: 1 },
+      { left: 70, delay: 3 }, { left: 90, delay: 4 }
+   ];
 
-  return (
-    <div className="absolute inset-0 opacity-10">
-      {positions.map((pos, i) => (
-        <motion.div
-          key={i}
-          className="absolute text-[#FF6C0C] font-mono text-xs"
-          style={{
-            left: `${pos.left}%`,
-          }}
-          animate={{
-            y: [0, 1000],
-            opacity: [0, 1, 0],
-          }}
-          transition={{
-            duration: 10 + (i % 5),
-            repeat: Infinity,
-            delay: pos.delay,
-          }}
-        >
-          {i % 2 === 0 ? "1" : "0"}
-        </motion.div>
-      ))}
-    </div>
-  );
+   return (
+      <div className="absolute inset-0 opacity-10">
+         {positions.map((pos, i) => (
+            <motion.div
+               key={i}
+               className="absolute text-[#FF6C0C] font-mono text-xs"
+               style={{
+                  left: `${pos.left}%`,
+               }}
+               animate={{
+                  y: [0, 1000],
+                  opacity: [0, 1, 0],
+               }}
+               transition={{
+                  duration: 15 + (i % 3), // Was 10 + (i % 5)
+                  repeat: Infinity,
+                  delay: pos.delay,
+               }}
+            >
+               {i % 2 === 0 ? "1" : "0"}
+            </motion.div>
+         ))}
+      </div>
+   );
 }
 
-/* NINJA STAR COMPONENT */
 function NinjaStar({ index, parallaxX, parallaxY }: any) {
-  const positions = [
-    { left: 10, top: 20 }, { left: 25, top: 40 }, { left: 40, top: 60 },
-    { left: 55, top: 30 }, { left: 70, top: 50 }, { left: 85, top: 70 },
-    { left: 15, top: 80 }, { left: 30, top: 25 }
-  ];
-  
-  const pos = positions[index] || { left: 50, top: 50 };
+   const positions = [
+      { left: 10, top: 20 }, { left: 25, top: 40 }, { left: 40, top: 60 },
+      { left: 55, top: 30 }, { left: 70, top: 50 }, { left: 85, top: 70 },
+      { left: 15, top: 80 }, { left: 30, top: 25 }
+   ];
+    
+   const pos = positions[index] || { left: 50, top: 50 };
 
-  return (
-    <motion.div
-      animate={{ 
-        rotate: 360,
-        y: [0, -50, 0],
-        x: [0, 20, 0]
-      }}
-      transition={{ 
-        rotate: { duration: 4 + index, repeat: Infinity, ease: "linear" },
-        y: { duration: 3 + index * 0.5, repeat: Infinity },
-        x: { duration: 2 + index * 0.3, repeat: Infinity }
-      }}
-      className="absolute text-[#FF6C0C] opacity-30"
-      style={{
-        left: `${pos.left}%`,
-        top: `${pos.top}%`,
-        x: parallaxX * (0.2 + index * 0.05),
-        y: parallaxY * (0.2 + index * 0.05)
-      }}
-    >
-      <svg width="16" height="16" className="hidden sm:block" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 2L9 12 2 12 8 17 5 22 12 17 19 22 16 17 22 12 15 12 12 2Z"/>
-      </svg>
-    </motion.div>
-  );
+   return (
+      <motion.div
+         animate={{  
+            rotate: 360,
+    y: [0, -50, 0],
+            x: [0, 20, 0]
+         }}
+         transition={{  
+            rotate: { duration: 10 + index, repeat: Infinity, ease: "linear" }, // Was 4 + index
+            y: { duration: 8 + index * 0.5, repeat: Infinity }, // Was 3 + index * 0.5
+            x: { duration: 7 + index * 0.3, repeat: Infinity } // Was 2 + index * 0.3
+         }}
+         className="absolute text-[#FF6C0C] opacity-30"
+         style={{
+            left: `${pos.left}%`,
+            top: `${pos.top}%`,
+         x: parallaxX * (0.2 + index * 0.05),
+            y: parallaxY * (0.2 + index * 0.05)
+         }}
+      >
+         <svg width="16" height="16" className="hidden sm:block" viewBox="0 0 24 24" fill="currentColor">
+         <path d="M12 2L9 12 2 12 8 17 5 22 12 17 19 22 16 17 22 12 15 12 12 2Z"/>
+         </svg>
+      </motion.div>
+   );
 }
-
 /* CIRCUIT BOARD PATTERN */
 function CircuitBoardPattern() {
   return (
@@ -796,6 +871,12 @@ function CircuitBoardPattern() {
     </div>
   );
 }
+
+
+
+
+
+
 
 /* NINJA MANTRA COMPONENT */
 function NinjaMantra() {

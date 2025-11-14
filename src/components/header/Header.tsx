@@ -2,6 +2,7 @@
 
 import type { Route } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -30,25 +31,35 @@ export const Header = () => {
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className={cn(
         "fixed inset-x-0 top-0 z-50 flex justify-center px-4 transition-all duration-300 ease-out",
-        isScrolled ? "py-4" : "py-6",
+        isScrolled ? "py-4" : "py-6"
       )}
     >
       <nav
         aria-label="Primary navigation"
         className={cn(
           "container-grid flex items-center justify-between gap-6 rounded-full border border-border/60 bg-background/80 px-6 py-4 backdrop-blur-xl transition-all duration-300",
-          isScrolled && "shadow-soft",
+          isScrolled && "shadow-soft"
         )}
       >
+        {/* LOGO + TITLE */}
         <div className="flex items-center gap-3">
           <Link
             href="/"
             className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-foreground transition hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
-            <span className="h-2 w-2 rounded-full bg-primary" aria-hidden />
+            <Image
+              src="/images/cn_logo.png"
+              alt="Coding Ninjas Logo"
+              width={40}
+              height={40}
+              className="object-contain"
+              priority
+            />
             Coding Ninjas
           </Link>
         </div>
+
+        {/* DESKTOP NAV */}
         <div className="hidden items-center gap-10 lg:flex">
           {navigationLinks.map((link) => {
             const isAnchor = link.href.includes("#");
@@ -58,7 +69,7 @@ export const Header = () => {
                 : pathname.startsWith(link.href.replace(/#.*$/, ""));
             const className = cn(
               "text-sm text-foreground/70 transition hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-              isActive && "text-foreground",
+              isActive && "text-foreground"
             );
 
             return isAnchor ? (
@@ -82,11 +93,15 @@ export const Header = () => {
             );
           })}
         </div>
+
+        {/* DESKTOP CTA */}
         <div className="hidden lg:flex">
           <CTAButton href="/careers" trackingId="header-join">
             Join Club
           </CTAButton>
         </div>
+
+        {/* MOBILE MENU BUTTON */}
         <button
           type="button"
           onClick={() => setIsMenuOpen((prev) => !prev)}
@@ -103,13 +118,15 @@ export const Header = () => {
                   "block h-0.5 w-5 bg-foreground transition-all duration-300",
                   isMenuOpen && idx === 0 && "translate-y-2 rotate-45",
                   isMenuOpen && idx === 1 && "opacity-0",
-                  isMenuOpen && idx === 2 && "-translate-y-2 -rotate-45",
+                  isMenuOpen && idx === 2 && "-translate-y-2 -rotate-45"
                 )}
               />
             ))}
           </div>
         </button>
       </nav>
+
+      {/* MOBILE MENU */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
@@ -131,7 +148,7 @@ export const Header = () => {
                   "text-base transition",
                   isActive
                     ? "text-foreground"
-                    : "text-foreground/80 hover:text-foreground",
+                    : "text-foreground/80 hover:text-foreground"
                 );
 
                 return isAnchor ? (
@@ -154,6 +171,7 @@ export const Header = () => {
                   </Link>
                 );
               })}
+
               <CTAButton
                 href="/careers"
                 trackingId="mobile-join"

@@ -1,5 +1,6 @@
 import type { Route } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { navigationLinks, siteConfig } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
@@ -13,12 +14,22 @@ export const Footer = () => (
   <footer className="mt-24 border-t border-border/60 bg-background/80">
     <div className="container-grid grid gap-10 py-16 md:grid-cols-[1.3fr,1fr] md:py-20">
       <div className="space-y-5">
+
+        {/* LOGO + TITLE */}
         <div className="flex items-center gap-3">
-          <span className="h-2 w-2 rounded-full bg-primary" aria-hidden />
+          <Image
+            src="/images/cn_logo.png"
+            alt="Coding Ninjas Logo"
+            width={42}
+            height={42}
+            className="object-contain"
+            priority
+          />
           <span className="text-sm font-semibold uppercase tracking-[0.4em] text-foreground/60">
             Coding Ninjas
           </span>
         </div>
+
         <p className="max-w-xl text-lg text-foreground/70">
           We are a student-led innovation guild expanding what&apos;s possible
           through code, creativity, and community impact.
@@ -42,6 +53,7 @@ export const Footer = () => (
           ))}
         </div>
       </div>
+
       <div className="grid gap-8 sm:grid-cols-2">
         <div>
           <p className="mb-4 text-xs uppercase tracking-[0.3em] text-foreground/60">
@@ -66,6 +78,7 @@ export const Footer = () => (
             ))}
           </ul>
         </div>
+
         <div>
           <p className="mb-4 text-xs uppercase tracking-[0.3em] text-foreground/60">
             Quick Links
@@ -82,12 +95,14 @@ export const Footer = () => (
         </div>
       </div>
     </div>
+
     <div className="border-t border-border/60">
       <div className="container-grid flex flex-col gap-3 py-6 text-xs text-foreground/50 md:flex-row md:items-center md:justify-between">
         <p>
           © {new Date().getFullYear()} {siteConfig.name}. Crafted for the next
           wave of creators.
         </p>
+
         <div className="flex flex-wrap gap-4">
           <Link href="/privacy" className={cn("hover:text-primary")}>
             Privacy
