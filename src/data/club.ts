@@ -153,27 +153,27 @@ export const coreValues = [
 
 export const upcomingEvents = [
   {
-    name: "Coding Ninjas Week",
-    startDate: "2025-12-01",
-    endDate: "2025-12-07",
+    name: "Avinya 3.0",
+    startDate: "2025-12-02",
+    endDate: "2025-12-02",
     url: "https://codingninjaschitkara.com/events/digital-Club-week",
     location: {
-      name: "Chitkara Innovation Garage",
+      name: "Henry Ford Hall, Martin Luther Block",
       address: "Chitkara University, Rajpura, Punjab, India",
     },
     description:
-      "Immersive week-long residency featuring workshops on generative AI, edge computing, and creative coding showcases.",
+      "A capstone project display event where the second year students showcase their web development skills through their projects and get reviewed by industry persons.",
   },
   {
-    name: "Impact Sprint 2026",
-    startDate: "2026-02-18",
-    endDate: "2026-02-20",
+    name: "AVINTRON 1.0",
+    startDate: "2025-12-08",
+    endDate: "2025-12-08",
     url: "https://codingninjaschitkara.com/events/impact-sprint",
     location: {
-      name: "Chandigarh Design Centre",
-      address: "Chandigarh, India",
+      name: "Henry Ford Hall, Martin Luther Block",
+      address: "Chitkara University, Rajpura, Punjab, India",
     },
     description:
-      "Cross-club hackathon focusing on civic impact, sustainability, and inclusive technology backed by industry mentors.",
+      "A project display where the students with collaboration with Arizona State University will showcase projects based on wheel chair modification for ease of disabled people.",
   },
 ];

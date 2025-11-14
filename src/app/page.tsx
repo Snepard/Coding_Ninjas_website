@@ -2,7 +2,7 @@ import { Hero } from "@/components/home/Hero";
 import { AchievementsStrip } from "@/components/home/AchievementsStrip";
 import TeamsPage from "@/components/home/TeamsSection";
 import { Sponsors } from "@/components/home/Sponsors";
-import { JoinSection } from "@/components/home/JoinSection";
+import { JoinSectionAnimated } from "@/components/home/JoinSectionAnimated";
 import { FAQ } from "@/components/home/FAQ";
 
 export const revalidate = 3600;
@@ -14,9 +14,9 @@ export default function Home() {
       <AchievementsStrip />
       <TeamsPage />
       <Sponsors />
-      <JoinSection />
+      <JoinSectionAnimated />
       <FAQ />
-         
+         
     </div>
   );
 }
