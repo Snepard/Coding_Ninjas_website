@@ -1,3 +1,5 @@
+// bg
+
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
@@ -59,7 +61,7 @@ export default function AboutUsPage() {
   const parallaxY = mousePosition.y * 0.01;
 
   return (
-    <main className="min-h-screen bg-black text-white font-sans overflow-x-hidden relative">
+    <main className="min-h-screen text-white font-sans overflow-x-hidden relative">
       {/* NINJA TECH TERMINAL OVERLAY */}
       <div className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
         <div className="flex justify-between items-center px-4 sm:px-6 py-3 text-xs font-mono">
@@ -119,7 +121,7 @@ export default function AboutUsPage() {
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-            className="w-32 h-32 sm:w-40 sm:h-40 border-4 border-[#FF6C0C] rounded-3xl rotate-45 relative overflow-hidden bg-black/50 backdrop-blur-lg mx-auto"
+            className="w-32 h-32 sm:w-40 sm:h-40 border-4 border-[#FF6C0C] rounded-3xl rotate-45 relative overflow-hidden backdrop-blur-lg mx-auto"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-[#FF6C0C]/20 to-transparent" />
             <Sword className="absolute inset-0 m-auto w-12 h-12 sm:w-16 sm:h-16 text-[#FF6C0C] rotate-[-45deg]" />
@@ -231,7 +233,7 @@ export default function AboutUsPage() {
 </section>
 
       {/* Enhanced Foundation Section */}
-      <section id="pillars" className="relative py-16 sm:py-20 md:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-black via-gray-950 to-black overflow-hidden">
+      <section id="pillars" className="relative py-16 sm:py-20 md:py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
   <motion.div
     initial={{ opacity: 0 }}
     whileInView={{ opacity: 0.15 }}
@@ -252,7 +254,7 @@ export default function AboutUsPage() {
               whileInView={{ scale: 1 }}
               viewport={{ once: true }}
               transition={{ type: "spring", damping: 20, delay: 0.2 }}
-              className="inline-flex items-center gap-4 sm:gap-6 px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl border border-[#FF6C0C] bg-black/50 backdrop-blur-xl mb-6 sm:mb-8"
+              className="inline-flex items-center gap-4 sm:gap-6 px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl border border-[#FF6C0C] backdrop-blur-xl mb-6 sm:mb-8"
             >
               <Zap className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-[#FF6C0C]" />
               <span className="text-lg sm:text-xl md:text-2xl font-bold text-[#FF6C0C] tracking-widest">
@@ -308,7 +310,7 @@ export default function AboutUsPage() {
 
 
       {/* Enhanced Leadership Section */}
-      <section id="leadership" className="relative py-16 sm:py-20 md:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-black to-gray-900/50">
+      <section id="leadership" className="relative py-16 sm:py-20 md:py-24 px-4 sm:px-6 lg:px-8">
   <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 80 }}
@@ -322,7 +324,7 @@ export default function AboutUsPage() {
               whileInView={{ scale: 1 }}
               viewport={{ once: true }}
               transition={{ type: "spring", delay: 0.2 }}
-              className="inline-flex items-center gap-4 sm:gap-6 px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl border border-[#FF6C0C] bg-black/50 backdrop-blur-xl mb-6 sm:mb-8"
+              className="inline-flex items-center gap-4 sm:gap-6 px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl border border-[#FF6C0C] backdrop-blur-xl mb-6 sm:mb-8"
             >
               <Cpu className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-[#FF6C0C]" />
               <span className="text-lg sm:text-xl md:text-2xl font-bold text-[#FF6C0C] tracking-widest">STRATEGIC COMMAND</span>
@@ -385,7 +387,7 @@ export default function AboutUsPage() {
               whileInView={{ scale: 1 }}
               viewport={{ once: true }}
               transition={{ type: "spring", delay: 0.2 }}
-              className="inline-flex items-center gap-4 sm:gap-6 px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl border border-[#FF6C0C] bg-black/50 backdrop-blur-xl mb-6 sm:mb-8"
+              className="inline-flex items-center gap-4 sm:gap-6 px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl border border-[#FF6C0C] backdrop-blur-xl mb-6 sm:mb-8"
             >
               <Terminal className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-[#FF6C0C]" />
               <span className="text-lg sm:text-xl md:text-2xl font-bold text-[#FF6C0C] tracking-widest">OPERATIONAL NEXUS</span>
@@ -542,7 +544,6 @@ function NinjaPhilosophyGrid() {
   className="
     absolute inset-0 
     rounded-3xl 
-    bg-black/40 
     backdrop-blur-xl 
     border border-orange-500/10 
     shadow-[0_8px_30px_rgba(0,0,0,0.35)]
