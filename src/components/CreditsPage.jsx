@@ -17,8 +17,9 @@ export default function CreditsPage() {
     {
       name: "Bhavyan",
       items: ["Home Page", "Contact Page", "Join club component"],
-      github: "https://github.com",
-      linkedin: "https://linkedin.com",
+      github: "https://github.com/Vaelkrith",
+      linkedin:
+        "https://www.linkedin.com/in/bhavyan-gupta-aa7617211?utm_source=share_via&utm_content=profile&utm_medium=member_ios",
     },
 
     {
