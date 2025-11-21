@@ -89,8 +89,8 @@ const PLAYER_HEIGHT = 72; // base desktop player height
 
 // Sprite config
 const SPRITE_SRC = "/images/NinjaRunner/spritesheet.png"; // default path; can be overridden via prop
-const TOP_PLATFORM_SRC = "/images/ninjarunner/top.png";
-const BOTTOM_PLATFORM_SRC = "/images/ninjarunner/bottom.png";
+const TOP_PLATFORM_SRC = "/images/NinjaRunner/top.png";
+const BOTTOM_PLATFORM_SRC = "/images/NinjaRunner/bottom.png";
 const SPRITE_FRAME_COUNT = 6; // number of frames horizontally in the sheet
 const SPRITE_FPS = 10; // animation frames per second
 
@@ -103,9 +103,9 @@ const COIN_ROT_SPEED = Math.PI * 2; // radians/sec (1 full rotation per second)
 
 // Obstacle images
 const OBSTACLE_IMG_PATHS = [
-  "/images/ninjarunner/obs1.png",
-  "/images/ninjarunner/obs2.png",
-  "/images/ninjarunner/obs3.png",
+  "/images/NinjaRunner/obs1.png",
+  "/images/NinjaRunner/obs2.png",
+  "/images/NinjaRunner/obs3.png",
 ];
 // Per-image height multipliers to control visual size while preserving aspect ratio
 // Make obs1 (index 0) a taller pillar by increasing its height.
@@ -496,7 +496,7 @@ export default function NinjaRunnerGame({
     img.onerror = () => {
       coinReadyRef.current = false;
     };
-    img.src = "/images/ninjarunner/shuriken.png";
+    img.src = "/images/NinjaRunner/shuriken.png";
     return () => {
       /* no-op */
     };
