@@ -1,3 +1,5 @@
+
+
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
@@ -270,7 +272,7 @@ export default function AboutUsPage() {
         <motion.div
           key={member.name}
           initial={{ opacity: 0, y: 80, scale: 0.9 }}
-          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ delay: index * 0.25, duration: 0.8, type: "spring" }}
           className="flex justify-center px-4 sm:px-5 lg:px-6"> {/* Increased side padding to match gap */}
@@ -334,7 +336,7 @@ export default function AboutUsPage() {
         <motion.div
           key={member.name}
           initial={{ opacity: 0, y: 60, scale: 0.95 }}
-          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true }}
           transition={{ delay: index * 0.15, duration: 0.7, type: "spring" }}
           className="flex justify-center px-4 sm:px-5 lg:px-6"> {/* Increased side padding to match gap */}
@@ -397,7 +399,7 @@ export default function AboutUsPage() {
         <motion.div
           key={director.name}
           initial={{ opacity: 0, y: 40, scale: 0.9 }}
-          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true }}
           transition={{ delay: index * 0.1, duration: 0.6 }}
           className="flex justify-center px-4 sm:px-5 lg:px-6"> {/* Increased side padding to match gap */}
@@ -835,17 +837,18 @@ function EnhancedDirectorPopup({ director, onClose }: any) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/95 backdrop-blur-xl z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/95 backdrop-blur-xl z-50 flex items-center justify-center p-4 overflow-y-auto"
       onClick={onClose}
     >
-      <motion.div
-        initial={{ scale: 0.8, opacity: 0, rotateX: 15 }}
-        animate={{ scale: 1, opacity: 1, rotateX: 0 }}
-        exit={{ scale: 0.8, opacity: 0, rotateX: 15 }}
-        transition={{ type: "spring", damping: 30, stiffness: 200 }}
-        className="bg-gradient-to-br from-black to-gray-900 border-2 border-[#FF6C0C] rounded-2xl sm:rounded-3xl p-6 sm:p-8 max-w-2xl w-full relative max-h-[90vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="flex items-center justify-center min-h-screen w-full">
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0, rotateX: 15 }}
+          animate={{ scale: 1, opacity: 1, rotateX: 0 }}
+          exit={{ scale: 0.8, opacity: 0, rotateX: 15 }}
+          transition={{ type: "spring", damping: 30, stiffness: 200 }}
+          className="bg-gradient-to-br from-black to-gray-900 border-2 border-[#FF6C0C] rounded-2xl sm:rounded-3xl p-6 sm:p-8 max-w-2xl w-full my-8 relative"
+          onClick={(e) => e.stopPropagation()}
+        >
         <motion.button
           whileHover={{ scale: 1.2, rotate: 90 }}
           whileTap={{ scale: 0.9 }}
@@ -925,6 +928,7 @@ function EnhancedDirectorPopup({ director, onClose }: any) {
           </div>
         </div>
       </motion.div>
+      </div>
     </motion.div>
   );
 }
@@ -938,17 +942,18 @@ function EnhancedLeaderPopup({ leader, onClose }: any) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/95 backdrop-blur-xl z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/95 backdrop-blur-xl z-50 flex items-center justify-center p-4 overflow-y-auto"
       onClick={onClose}
     >
-      <motion.div
-        initial={{ scale: 0.8, opacity: 0, rotateX: 15 }}
-        animate={{ scale: 1, opacity: 1, rotateX: 0 }}
-        exit={{ scale: 0.8, opacity: 0, rotateX: 15 }}
-        transition={{ type: "spring", damping: 30, stiffness: 200 }}
-        className="bg-gradient-to-br from-black to-gray-900 border-2 border-[#FF6C0C] rounded-2xl sm:rounded-3xl p-6 sm:p-8 max-w-2xl w-full relative max-h-[90vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="flex items-center justify-center min-h-screen w-full">
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0, rotateX: 15 }}
+          animate={{ scale: 1, opacity: 1, rotateX: 0 }}
+          exit={{ scale: 0.8, opacity: 0, rotateX: 15 }}
+          transition={{ type: "spring", damping: 30, stiffness: 200 }}
+          className="bg-gradient-to-br from-black to-gray-900 border-2 border-[#FF6C0C] rounded-2xl sm:rounded-3xl p-6 sm:p-8 max-w-2xl w-full my-8 relative"
+          onClick={(e) => e.stopPropagation()}
+        >
         <motion.button
           whileHover={{ scale: 1.2, rotate: 90 }}
           whileTap={{ scale: 0.9 }}
@@ -1027,28 +1032,30 @@ function EnhancedLeaderPopup({ leader, onClose }: any) {
           </div>
         </div>
       </motion.div>
+      </div>
     </motion.div>
   );
 }
 
 /* Enhanced Pillar Popup */
 function EnhancedPillarPopup({ pillar, onClose }: any) {
-  return (
+ return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/95 backdrop-blur-xl z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/95 backdrop-blur-xl z-50 flex items-center justify-center p-4 overflow-y-auto"
       onClick={onClose}
     >
-      <motion.div
-        initial={{ scale: 0.8, opacity: 0, rotateX: 15 }}
-        animate={{ scale: 1, opacity: 1, rotateX: 0 }}
-        exit={{ scale: 0.8, opacity: 0, rotateX: 15 }}
-        transition={{ type: "spring", damping: 30, stiffness: 200 }}
-        className="bg-gradient-to-br from-black to-gray-900 border-2 border-[#FF6C0C] rounded-2xl sm:rounded-3xl p-6 sm:p-8 max-w-2xl w-full relative max-h-[90vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="flex items-center justify-center min-h-screen w-full">
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0, rotateX: 15 }}
+          animate={{ scale: 1, opacity: 1, rotateX: 0 }}
+          exit={{ scale: 0.8, opacity: 0, rotateX: 15 }}
+          transition={{ type: "spring", damping: 30, stiffness: 200 }}
+          className="bg-gradient-to-br from-black to-gray-900 border-2 border-[#FF6C0C] rounded-2xl sm:rounded-3xl p-6 sm:p-8 max-w-2xl w-full my-8 relative"
+          onClick={(e) => e.stopPropagation()}
+        >
         <motion.button
           whileHover={{ scale: 1.2, rotate: 90 }}
           whileTap={{ scale: 0.9 }}
@@ -1116,6 +1123,7 @@ function EnhancedPillarPopup({ pillar, onClose }: any) {
           </div>
         </div>
       </motion.div>
+      </div>
     </motion.div>
   );
 }
@@ -1137,7 +1145,7 @@ const pillars = [
     bio: "Dr. Chetna Sharma leads Coding Ninjas CUIET with unparalleled passion and commitment to technological advancement. Her innovative teaching methodologies and student-centric approach have revolutionized how coding education is delivered. With expertise in multiple programming paradigms and software development practices, she guides students through complex technical challenges while nurturing their creative potential. Dr. Sharma's leadership has established a vibrant community where students transform into skilled developers, ready to tackle real-world problems with confidence and technical excellence."
   },
   { 
-    name: "Ms. Gagandeep Kaur", 
+    name: "Dr. Gagandeep Kaur", 
     role: "Associate Lead, Coding Ninjas CUIET", 
     img: "/team/gagandeep.png", 
     linkedin: "#",
