@@ -21,7 +21,8 @@ export async function GET(request: Request) {
       { game, score: doc?.score ?? 0, updatedAt: doc?.updatedAt ?? null },
       { status: 200 },
     );
-  } catch (err) {
+  } catch (error) {
+    console.error("Failed to fetch high score:", error);
     return NextResponse.json(
       { error: "Failed to fetch high score" },
       { status: 500 },
@@ -68,7 +69,8 @@ export async function POST(request: Request) {
       { updated: false, score: current.score },
       { status: 200 },
     );
-  } catch (err) {
+  } catch (error) {
+    console.error("Failed to update high score:", error);
     return NextResponse.json(
       { error: "Failed to update high score" },
       { status: 500 },
