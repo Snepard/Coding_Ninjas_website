@@ -24,6 +24,10 @@ export const Header = () => {
     return () => window.removeEventListener("scroll", listener);
   }, []);
 
+  // no session UI in header: always show Join Club CTA which goes to /signin
+
+  // no persistent avatar logic here: header always shows Join Club button (icon-only)
+
   return (
     <motion.header
       initial={{ opacity: 0, y: -20 }}
@@ -31,14 +35,14 @@ export const Header = () => {
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className={cn(
         "fixed inset-x-0 top-0 z-50 flex justify-center px-4 transition-all duration-300 ease-out",
-        isScrolled ? "py-4" : "py-6"
+        isScrolled ? "py-4" : "py-6",
       )}
     >
       <nav
         aria-label="Primary navigation"
         className={cn(
           "container-grid flex items-center justify-between gap-6 rounded-full border border-border/60 bg-background/80 px-6 py-4 backdrop-blur-xl transition-all duration-300",
-          isScrolled && "shadow-soft"
+          isScrolled && "shadow-soft",
         )}
       >
         {/* LOGO + TITLE */}
@@ -69,7 +73,7 @@ export const Header = () => {
                 : pathname.startsWith(link.href.replace(/#.*$/, ""));
             const className = cn(
               "text-sm text-foreground/70 transition hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-              isActive && "text-foreground"
+              isActive && "text-foreground",
             );
 
             return isAnchor ? (
@@ -96,7 +100,7 @@ export const Header = () => {
 
         {/* DESKTOP CTA */}
         <div className="hidden lg:flex">
-          <CTAButton href="/careers" trackingId="header-join">
+          <CTAButton href="/signin" trackingId="header-join">
             Join Club
           </CTAButton>
         </div>
@@ -118,7 +122,7 @@ export const Header = () => {
                   "block h-0.5 w-5 bg-foreground transition-all duration-300",
                   isMenuOpen && idx === 0 && "translate-y-2 rotate-45",
                   isMenuOpen && idx === 1 && "opacity-0",
-                  isMenuOpen && idx === 2 && "-translate-y-2 -rotate-45"
+                  isMenuOpen && idx === 2 && "-translate-y-2 -rotate-45",
                 )}
               />
             ))}
@@ -148,7 +152,7 @@ export const Header = () => {
                   "text-base transition",
                   isActive
                     ? "text-foreground"
-                    : "text-foreground/80 hover:text-foreground"
+                    : "text-foreground/80 hover:text-foreground",
                 );
 
                 return isAnchor ? (
@@ -173,7 +177,7 @@ export const Header = () => {
               })}
 
               <CTAButton
-                href="/careers"
+                href="/signin"
                 trackingId="mobile-join"
                 onClick={() => setIsMenuOpen(false)}
               >

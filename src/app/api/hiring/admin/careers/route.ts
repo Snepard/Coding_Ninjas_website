@@ -39,7 +39,26 @@ export async function POST(req: Request) {
 export async function GET() {
   try {
     await connectDB();
-    const careers = await Career.find({}).sort({ createdAt: -1 });
+    const careers = await Career.find({});
+
+    // Sort careers so that all Lead roles come first (alphabetical by title),
+    // then Executive roles (alphabetical), then any other roles.
+    careers.sort((a, b) => {
+      const roleOrder = (role?: string) => {
+        const r = (role || "").toLowerCase();
+        if (r.includes("lead")) return 0;
+        if (r.includes("executive")) return 1;
+        return 2;
+      };
+
+      const oa = roleOrder(a.role);
+      const ob = roleOrder(b.role);
+      if (oa !== ob) return oa - ob;
+
+      // Same role group: sort alphabetically by title (case-insensitive)
+      return a.title.localeCompare(b.title, undefined, { sensitivity: "base" });
+    });
+
     return NextResponse.json({ success: true, careers });
   } catch (error) {
     let message = "An unknown server error occurred.";

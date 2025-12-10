@@ -52,11 +52,12 @@ export async function POST(req: NextRequest) {
       { status: 200 },
     );
 
+    // Persist token for 30 days so UI can keep the user logged in across visits
     response.cookies.set("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // ❌ use false in dev if needed
+      secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      // maxAge: 2 * 60 * 60,
+      maxAge: 30 * 24 * 60 * 60, // 30 days
       path: "/",
     });
 
