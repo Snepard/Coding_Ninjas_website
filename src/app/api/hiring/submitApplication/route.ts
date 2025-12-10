@@ -1,29 +1,37 @@
-// src/app/api/submitApplication/route.ts
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { HiringForm } from "@/models/hiring/HiringForm";
-import { v2 as cloudinary, UploadApiResponse } from "cloudinary"; // Import UploadApiResponse
+import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
 import nodemailer from "nodemailer";
 import path from "path";
 
-// NOTE: These are currently unused and cause warnings. Consider removing them if not needed.
-// const GENDERS = ["Male", "Female", "Other"] as const;
-// const HOSTELLER_TYPES = ["Hosteller", "Day Scholar"] as const;
+/* =========================
+   ✅ REQUIRED FOR FILE UPLOADS
+========================= */
+export const runtime = "nodejs";
+export const maxDuration = 15;
 
-// Configure Cloudinary
+/* =========================
+   ✅ CLOUDINARY CONFIG
+========================= */
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
+  api_key: process.env.CLOUDINARY_API_KEY!,
+  api_secret: process.env.CLOUDINARY_API_SECRET!,
 });
 
+/* =========================
+   ✅ POST HANDLER
+========================= */
 export async function POST(req: Request) {
   try {
     await connectDB();
 
     const formData = await req.formData();
 
-    // Extract fields
+    /* =========================
+       ✅ FORM FIELDS
+    ========================= */
     const name = (formData.get("name") as string)?.trim();
     const rollNumber = (formData.get("rollNumber") as string)?.trim();
     const contactNumber = (formData.get("contactNumber") as string)?.trim();
@@ -37,95 +45,73 @@ export async function POST(req: Request) {
     const role = (formData.get("role") as string)?.trim();
     const resumeFile = formData.get("resume") as File | null;
 
-    // Configurable max file size for uploads (default 10MB = 10,485,760 bytes)
+    /* =========================
+       ✅ BASIC VALIDATION
+    ========================= */
+    if (!name || !rollNumber || !chitkaraEmail || !position || !role) {
+      return NextResponse.json(
+        { success: false, error: "Missing required fields." },
+        { status: 400 },
+      );
+    }
+
+    /* =========================
+       ✅ FILE SIZE LIMIT
+    ========================= */
     const MAX_FILE_SIZE = process.env.CLOUDINARY_MAX_FILE_SIZE
       ? parseInt(process.env.CLOUDINARY_MAX_FILE_SIZE, 10)
-      : 10_485_760;
+      : 10_485_760; // 10MB
 
-    // --- Validation ---
-    // ... [your existing validation logic remains unchanged] ...
-
-    // Handle resume file upload → Cloudinary
     let resumeUrl = "";
+
+    /* =========================
+       ✅ CLOUDINARY STREAM UPLOAD
+    ========================= */
     if (resumeFile) {
-      // Basic size validation before attempting upload
       try {
-        const fileSize =
-          typeof resumeFile.size === "number" ? resumeFile.size : 0;
-        if (fileSize > MAX_FILE_SIZE) {
+        if (resumeFile.size > MAX_FILE_SIZE) {
           return NextResponse.json(
             {
               success: false,
-              error: `Resume file is too large. Maximum allowed is ${MAX_FILE_SIZE} bytes.`,
+              error: "Resume must be under 10MB.",
             },
             { status: 413 },
           );
         }
 
-        const arrayBuffer = await resumeFile.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
+        const buffer = Buffer.from(await resumeFile.arrayBuffer());
 
-        const originalFilename = path.parse(resumeFile.name).name;
-        const sanitizedFilename = originalFilename.replace(
-          /[^a-zA-Z0-9_.-]/g,
-          "_",
-        );
+        const safeName = path
+          .parse(resumeFile.name)
+          .name.replace(/[^a-zA-Z0-9_-]/g, "_");
 
-        // Upload to Cloudinary with specific error handling
-        const uploaded = await new Promise<UploadApiResponse>(
+        const uploadResult = await new Promise<UploadApiResponse>(
           (resolve, reject) => {
-            cloudinary.uploader
-              .upload_stream(
-                {
-                  folder: "resumes",
-                  resource_type: "raw",
-                  public_id: sanitizedFilename,
-                  use_filename: true,
-                  unique_filename: true,
-                },
-                (error, result) => {
-                  if (error) {
-                    console.error("Cloudinary Upload Error:", error);
-                    return reject(error);
-                  }
-                  if (!result) {
-                    return reject(
-                      new Error(
-                        "Cloudinary upload failed: no result returned.",
-                      ),
-                    );
-                  }
-                  resolve(result);
-                },
-              )
-              .end(buffer);
+            const stream = cloudinary.uploader.upload_stream(
+              {
+                folder: "resumes",
+                resource_type: "raw",
+                public_id: `resume_${Date.now()}_${safeName}`,
+                timeout: 120_000, // ✅ 2 min
+              },
+              (error, result) => {
+                if (error) return reject(error);
+                if (!result)
+                  return reject(new Error("Cloudinary upload failed."));
+                resolve(result);
+              },
+            );
+
+            stream.end(buffer);
           },
         );
 
-        resumeUrl = uploaded.secure_url;
+        resumeUrl = uploadResult.secure_url;
       } catch (err: unknown) {
-        // Handle Cloudinary/file related errors explicitly to avoid 500 and unhandledRejection
-        console.error("Cloudinary Upload Error:", err);
+        console.error("❌ Cloudinary Upload Error:", err);
 
-        // If it's an Error with a message, surface it in dev; otherwise return a generic message
-        let message = "Failed to upload resume.";
-        if (err instanceof Error && err.message) {
-          message = err.message;
-        }
-
-        // Map Cloudinary file-size specific response to 413 where appropriate
-        if (typeof err === "object" && err !== null) {
-          const errObj = err as { http_code?: number; message?: string };
-          if (
-            errObj.http_code === 400 &&
-            /file size/i.test(errObj.message || "")
-          ) {
-            return NextResponse.json(
-              { success: false, error: message },
-              { status: 413 },
-            );
-          }
-        }
+        let message = "Resume upload failed.";
+        if (err instanceof Error) message = err.message;
 
         return NextResponse.json(
           { success: false, error: message },
@@ -134,7 +120,9 @@ export async function POST(req: Request) {
       }
     }
 
-    // --- Create hiring form document ---
+    /* =========================
+       ✅ SAVE TO DATABASE
+    ========================= */
     const application = await HiringForm.create({
       name,
       rollNumber,
@@ -151,75 +139,67 @@ export async function POST(req: Request) {
       status: "pending",
     });
 
-    // --- Send confirmation email to applicant and optional admin notification ---
+    /* =========================
+       ✅ EMAIL (NON-BLOCKING)
+    ========================= */
     (async () => {
       try {
         const SMTP_USER = process.env.SMTP_USER;
         const SMTP_PASS = process.env.SMTP_PASS;
-        const SMTP_FROM_NAME = process.env.SMTP_FROM_NAME || "CN_CUIET";
-        const ADMIN_NOTIFICATION_EMAIL = process.env.ADMIN_NOTIFICATION_EMAIL; // optional
+        const ADMIN_EMAIL = process.env.ADMIN_NOTIFICATION_EMAIL;
 
-        if (!SMTP_USER || !SMTP_PASS) {
-          console.warn("SMTP_USER or SMTP_PASS not set — skipping email send.");
-          return;
-        }
+        if (!SMTP_USER || !SMTP_PASS) return;
 
         const transporter = nodemailer.createTransport({
           service: "gmail",
-          auth: {
-            user: SMTP_USER,
-            pass: SMTP_PASS,
-          },
+          auth: { user: SMTP_USER, pass: SMTP_PASS },
         });
 
-        // Applicant confirmation
-        const applicantMail = {
-          from: `"${SMTP_FROM_NAME}" <${SMTP_USER}>`,
-          to: application.chitkaraEmail,
-          subject: `Application Received: ${application.position} (${application.role})`,
-          html: `<p>Hi ${application.name},</p>
-                 <p>Thanks for applying for the <strong>${application.position} (${application.role})</strong> role. We have received your application and will review it shortly.</p>
-                 <p>Best regards,<br/>${SMTP_FROM_NAME}</p>`,
-        };
+        // Applicant mail
+        await transporter.sendMail({
+          from: `"CN_CUIET" <${SMTP_USER}>`,
+          to: chitkaraEmail,
+          subject: "Application Received",
+          html: `
+            <p>Hi ${name},</p>
+            <p>Your application for <b>${position} (${role})</b> has been received.</p>
+            <p>Regards,<br/>CN_CUIET</p>
+          `,
+        });
 
-        await transporter.sendMail(applicantMail);
-
-        // Optional admin notification
-        if (ADMIN_NOTIFICATION_EMAIL) {
-          const adminMail = {
-            from: `"${SMTP_FROM_NAME}" <${SMTP_USER}>`,
-            to: ADMIN_NOTIFICATION_EMAIL,
-            subject: `New Application: ${application.name} — ${application.position}`,
-            html: `<p>A new hiring application was submitted.</p>
-                   <ul>
-                     <li><strong>Name:</strong> ${application.name}</li>
-                     <li><strong>Email:</strong> ${application.chitkaraEmail}</li>
-                     <li><strong>Roll Number:</strong> ${application.rollNumber}</li>
-                     <li><strong>Position / Role:</strong> ${application.position} / ${application.role}</li>
-                     <li><strong>Resume:</strong> ${application.resumeUrl || "N/A"}</li>
-                   </ul>`,
-          };
-
-          await transporter.sendMail(adminMail);
+        // Admin mail (optional)
+        if (ADMIN_EMAIL) {
+          await transporter.sendMail({
+            from: `"CN_CUIET" <${SMTP_USER}>`,
+            to: ADMIN_EMAIL,
+            subject: `New Application: ${name}`,
+            html: `
+              <p><b>${name}</b> applied for <b>${position}</b></p>
+              <p>Email: ${chitkaraEmail}</p>
+              <p>Resume: ${resumeUrl || "N/A"}</p>
+            `,
+          });
         }
       } catch (emailErr) {
-        console.error("Failed to send application email:", emailErr);
+        console.error("❌ Email Error:", emailErr);
       }
     })();
 
-    return NextResponse.json({ success: true, application }, { status: 201 });
+    /* =========================
+       ✅ RESPONSE
+    ========================= */
+    return NextResponse.json(
+      { success: true, applicationId: application._id },
+      { status: 201 },
+    );
   } catch (err: unknown) {
-    // ✅ FIX 2: Replaced 'any' with the safer 'unknown' type.
-    console.error("❌ Top-level catch block error:", err);
+    console.error("❌ submitApplication error:", err);
 
-    // Type check to safely access the error message
-    let errorMessage = "An unknown error occurred.";
-    if (err instanceof Error) {
-      errorMessage = err.message;
-    }
+    let message = "Internal server error.";
+    if (err instanceof Error) message = err.message;
 
     return NextResponse.json(
-      { success: false, error: errorMessage },
+      { success: false, error: message },
       { status: 500 },
     );
   }
