@@ -119,33 +119,10 @@ export default function AboutUsPage() {
             className="relative z-10"
           >
             <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="mb-12 sm:mb-16"
-            >
-              <NinjaMantra />
-            </motion.div>
-
-            <motion.div className="inline-block mb-16 sm:mb-20">
-              <div className="relative">
-                <div className="w-32 h-32 sm:w-40 sm:h-40 border-4 border-[#FF6C0C] rounded-3xl rotate-45 relative overflow-hidden backdrop-blur-lg mx-auto">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#FF6C0C]/20 to-transparent" />
-                  <Sword className="absolute inset-0 m-auto w-12 h-12 sm:w-16 sm:h-16 text-[#FF6C0C] rotate-[-45deg]" />
-                </div>
-
-                <div className="absolute inset-0 m-auto w-40 h-40 sm:w-48 sm:h-48">
-                  <div className="absolute top-0 left-1/2 w-2 h-2 sm:w-3 sm:h-3 bg-[#FF6C0C] rounded-full transform -translate-x-1/2 -translate-y-1/2" />
-                  <div className="absolute bottom-0 left-1/2 w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#FF8C3C] rounded-full transform -translate-x-1/2 translate-y-1/2" />
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="relative mb-12 sm:mb-16"
+              transition={{ delay: 0.3 }}
+              className="relative mb-8 sm:mb-12"
             >
               <h1 className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-black mb-8 sm:mb-12 leading-none tracking-tight">
                 <motion.span
@@ -177,8 +154,8 @@ export default function AboutUsPage() {
               <motion.p
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.7 }}
-                className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-300 max-w-4xl sm:max-w-5xl mx-auto font-light tracking-wide mb-16 sm:mb-20 leading-relaxed px-4"
+                transition={{ delay: 1.5 }}
+                className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-300 max-w-4xl sm:max-w-5xl mx-auto font-light tracking-wide mb-12 sm:mb-16 leading-relaxed px-4"
               >
                 Where{" "}
                 <span className="text-[#FF6C0C] font-semibold">innovation</span>{" "}
@@ -191,7 +168,7 @@ export default function AboutUsPage() {
               <motion.div
                 initial={{ opacity: 0, y: 60 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 2.0 }}
+                transition={{ delay: 1.8 }}
                 className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8 max-w-2xl sm:max-w-4xl mx-auto px-4"
               >
                 {achievements.map((item, index) => {
@@ -202,7 +179,7 @@ export default function AboutUsPage() {
                       key={item.metric}
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 2.2 + index * 0.1 }}
+                      transition={{ delay: 2.0 + index * 0.1 }}
                       whileHover={{ scale: 1.12, y: -10 }}
                       className="text-center p-4 sm:p-6 md:p-8 bg-white/5 rounded-2xl sm:rounded-3xl border border-white/10 hover:border-[#FF6C0C] transition-all duration-500 backdrop-blur-lg group cursor-pointer"
                     >
@@ -299,38 +276,39 @@ export default function AboutUsPage() {
             </motion.p>
           </motion.div>
 
-          <div className="px-0">
-            {/* First row: center the first pillar card */}
-            <div className="flex justify-center mb-8 sm:mb-12">
-              {pillars[0] && (
-                <motion.div
-                  key={pillars[0].name}
-                  initial={{ opacity: 0, y: 80, scale: 0.9 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ delay: 0, duration: 0.8, type: "spring" }}
-                  className="w-full max-w-2xl px-4 sm:px-5 lg:px-6"
-                >
-                  <EnhancedPillarCard
-                    member={pillars[0]}
-                    index={0}
-                    onClick={() => setSelectedPillar(pillars[0])}
-                  />
-                </motion.div>
-              )}
-            </div>
+          {/* Row 1: 1 centered card */}
+          <div className="flex justify-center mb-8 sm:mb-12">
+            {pillars[0] && (
+              <motion.div
+                key={pillars[0].name}
+                initial={{ opacity: 0, y: 60, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0, duration: 0.7, type: "spring" }}
+                className="w-full px-4 sm:px-5 lg:px-6"
+                style={{ maxWidth: "calc(33.333% - 1.5rem)" }}
+              >
+                <EnhancedPillarCard
+                  member={pillars[0]}
+                  index={0}
+                  onClick={() => setSelectedPillar(pillars[0])}
+                />
+              </motion.div>
+            )}
+          </div>
 
-            {/* Second row: remaining two pillar cards side by side */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12">
+          {/* Row 2: 2 cards side by side with center alignment */}
+          <div className="flex justify-center mb-8 sm:mb-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12 px-0 w-full max-w-4xl">
               {pillars.slice(1).map((member, idx) => (
                 <motion.div
                   key={member.name}
-                  initial={{ opacity: 0, y: 80, scale: 0.9 }}
+                  initial={{ opacity: 0, y: 60, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  viewport={{ once: true, margin: "-50px" }}
+                  viewport={{ once: true }}
                   transition={{
-                    delay: 0.25 + idx * 0.25,
-                    duration: 0.8,
+                    delay: (idx + 1) * 0.15,
+                    duration: 0.7,
                     type: "spring",
                   }}
                   className="flex justify-center px-4 sm:px-5 lg:px-6"
@@ -766,15 +744,15 @@ function EnhancedPillarCard({ member, index, onClick }: any) {
 
   return (
     <motion.div
-      whileHover={{ scale: 1.03, y: -10 }}
-      className="relative group cursor-pointer h-full min-h-[450px] sm:min-h-[500px] bg-gradient-to-br from-black to-gray-900 border-2 border-white/10 rounded-2xl sm:rounded-3xl overflow-hidden border-[#FF6C0C]/30 hover:border-[#FF6C0C] transition-all duration-700 flex flex-col shadow-2xl shadow-black/50 w-full mx-auto"
+      whileHover={{ scale: 1.05, y: -15 }}
+      className="relative cursor-pointer group w-full min-h-[450px] sm:min-h-[500px] bg-gradient-to-br from-black to-gray-900 border-2 border-white/10 rounded-2xl sm:rounded-3xl overflow-hidden hover:border-[#FF6C0C] transition-all duration-700 flex flex-col shadow-2xl shadow-black/50 w-full mx-auto"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
     >
       {/* Image Container */}
       <motion.div
-        animate={{ scale: isHovered ? 1.08 : 1 }}
+        animate={{ scale: isHovered ? 1.12 : 1 }}
         className="relative h-56 sm:h-60 md:h-64 flex-shrink-0 overflow-hidden"
       >
         <Image
@@ -784,63 +762,50 @@ function EnhancedPillarCard({ member, index, onClick }: any) {
           className="object-cover transition-transform duration-1000"
           sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 30vw"
           priority={index === 0}
-          style={{ objectPosition: "center 20%" }}
+          style={{ objectPosition: "center center" }}
         />
 
-        <motion.div
-          animate={{ opacity: isHovered ? 0.3 : 0.1 }}
-          className="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-black/40 transition-opacity duration-500"
-        />
-
-        <motion.div
-          animate={{ x: isHovered ? "100%" : "-100%" }}
-          transition={{ duration: 1.2 }}
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-[#FF6C0C]/20 to-transparent transform skew-x-12"
-        />
+        <div className="absolute bottom-0 left-0 right-0 h-20 sm:h-24 bg-gradient-to-t from-black to-transparent" />
       </motion.div>
 
-      {/* Content */}
-      <div className="flex-1 flex flex-col p-4 sm:p-6 md:p-8">
+      {/* Content Area */}
+      <div className="flex-1 flex flex-col p-4 sm:p-5 md:p-6">
         <div className="flex-1 space-y-3 sm:space-y-4">
-          <motion.h3
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="text-lg sm:text-xl font-bold text-white leading-tight"
-          >
+          <h3 className="text-base sm:text-lg font-bold text-white leading-tight">
             {member.name}
-          </motion.h3>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            className="inline-flex items-center gap-2 px-3 sm:px-4 py-1 sm:py-2 bg-[#FF6C0C] rounded-full"
-          >
+          </h3>
+          <div className="inline-flex items-center gap-2 px-2 sm:px-3 py-1 bg-[#FF6C0C] rounded-full">
             <span className="text-xs font-bold text-white uppercase tracking-widest">
               {member.role}
             </span>
-          </motion.div>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="text-gray-300 text-xs sm:text-sm leading-relaxed line-clamp-4"
-          >
+          </div>
+          <p className="text-gray-300 text-xs sm:text-sm leading-relaxed line-clamp-3">
             {member.bio}
-          </motion.p>
+          </p>
         </div>
 
-        {/* LinkedIn Button */}
-        <motion.a
-          whileHover={{ scale: 1.05, y: -2 }}
-          whileTap={{ scale: 0.98 }}
-          href={member.linkedin}
-          className="flex items-center justify-center gap-2 sm:gap-3 w-full py-2 sm:py-3 md:py-4 mt-4 sm:mt-6 bg-gradient-to-r from-[#FF6C0C] to-[#FF8C3C] hover:from-[#FF8C3C] hover:to-[#FF6C0C] text-white font-bold rounded-lg sm:rounded-xl transition-all duration-300 text-xs sm:text-sm shadow-lg shadow-[#FF6C0C]/20"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <Linkedin className="w-3 h-3 sm:w-4 sm:h-4" />
-          Connect on LinkedIn
-        </motion.a>
+        {/* Buttons */}
+        <div className="flex gap-2 sm:gap-3 mt-4 sm:mt-6">
+          <motion.a
+            whileHover={{ scale: 1.05, y: -2 }}
+            href={member.linkedin}
+            className="flex-1 flex items-center justify-center gap-1 sm:gap-2 py-2 sm:py-3 bg-[#FF6C0C] hover:bg-[#FF8C3C] text-white font-bold rounded-lg sm:rounded-xl transition-all duration-300 text-xs sm:text-sm"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Linkedin className="w-3 h-3 sm:w-4 sm:h-4" />
+            Connect
+          </motion.a>
+          {member.insta && (
+            <motion.a
+              whileHover={{ scale: 1.1, rotate: 360 }}
+              href={member.insta}
+              className="flex items-center justify-center px-2 sm:px-3 py-2 sm:py-3 border-2 border-[#FF6C0C] hover:bg-[#FF6C0C] text-[#FF6C0C] hover:text-white rounded-lg sm:rounded-xl transition-all duration-300"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Instagram className="w-3 h-3 sm:w-4 sm:h-4" />
+            </motion.a>
+          )}
+        </div>
       </div>
     </motion.div>
   );
