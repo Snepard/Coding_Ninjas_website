@@ -55,7 +55,7 @@ export const DynamicBackground = () => {
 
   const mouseRef = useRef({ x: 0, y: 0 });
   const idleRef = useRef(false);
-  const lastInteractionRef = useRef(performance.now());
+  const lastInteractionRef = useRef(0);
   const lowPowerRef = useRef<boolean>(
     typeof navigator !== "undefined" &&
       "connection" in navigator &&
@@ -97,9 +97,27 @@ export const DynamicBackground = () => {
 
     const initRings = () => {
       ringsRef.current = [
-        { radiusRatio: 0.3, thickness: 28, rotation: 0, speed: 0.0035, direction: 1 },
-        { radiusRatio: 0.5, thickness: 36, rotation: 0, speed: 0.0025, direction: -1 },
-        { radiusRatio: 0.78, thickness: 18, rotation: 0, speed: 0.0015, direction: 1 },
+        {
+          radiusRatio: 0.3,
+          thickness: 28,
+          rotation: 0,
+          speed: 0.0035,
+          direction: 1,
+        },
+        {
+          radiusRatio: 0.5,
+          thickness: 36,
+          rotation: 0,
+          speed: 0.0025,
+          direction: -1,
+        },
+        {
+          radiusRatio: 0.78,
+          thickness: 18,
+          rotation: 0,
+          speed: 0.0015,
+          direction: 1,
+        },
       ];
     };
 
@@ -150,6 +168,9 @@ export const DynamicBackground = () => {
       };
     };
 
+    // Initialize lastInteractionRef
+    lastInteractionRef.current = performance.now();
+
     const handleMouseMove = (event: MouseEvent) => {
       mouseRef.current = { x: event.clientX, y: event.clientY };
       lastInteractionRef.current = performance.now();
@@ -166,6 +187,219 @@ export const DynamicBackground = () => {
     document.addEventListener("visibilitychange", handleVisibility);
 
     let lastTime = performance.now();
+
+    const drawAura = (
+      ctx: CanvasRenderingContext2D,
+      cx: number,
+      cy: number,
+      radius: number,
+      time: number,
+      intensity: number,
+    ) => {
+      const auraGradient = ctx.createRadialGradient(
+        cx + Math.sin(time * 0.0002) * 10,
+        cy + Math.cos(time * 0.00015) * 10,
+        radius * 0.1,
+        cx,
+        cy,
+        radius * 1.2,
+      );
+      auraGradient.addColorStop(0, `rgba(255, 109, 0, ${0.04 * intensity})`);
+      auraGradient.addColorStop(
+        0.4,
+        `rgba(255, 255, 255, ${0.02 * intensity})`,
+      );
+      auraGradient.addColorStop(1, "rgba(10, 10, 10, 0)");
+      ctx.save();
+      ctx.globalCompositeOperation = "screen";
+      ctx.fillStyle = auraGradient;
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius * 1.2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    };
+
+    const drawRings = (
+      ctx: CanvasRenderingContext2D,
+      cx: number,
+      cy: number,
+      radius: number,
+      speedFactor: number,
+      intensity: number,
+    ) => {
+      const rings = ringsRef.current;
+      const parallax = {
+        x: (mouseRef.current.x - cx) * -0.004,
+        y: (mouseRef.current.y - cy) * -0.004,
+      };
+
+      rings.forEach((ring, index) => {
+        ring.rotation += ring.speed * ring.direction * speedFactor * intensity;
+        const actualRadius = ring.radiusRatio * radius;
+        ctx.save();
+        ctx.translate(cx + parallax.x, cy + parallax.y);
+        ctx.rotate(ring.rotation);
+        ctx.lineWidth = ring.thickness;
+        ctx.globalAlpha = 0.15 * intensity;
+        const gradient = ctx.createLinearGradient(
+          -actualRadius,
+          0,
+          actualRadius,
+          0,
+        );
+        gradient.addColorStop(0, "rgba(255, 255, 255, 0)");
+        gradient.addColorStop(
+          0.5,
+          index === 0 ? "rgba(255, 255, 255, 0.35)" : "rgba(255, 109, 0, 0.25)",
+        );
+        gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
+        ctx.strokeStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(0, 0, actualRadius, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      });
+    };
+
+    const drawGlyphs = (
+      ctx: CanvasRenderingContext2D,
+      cx: number,
+      cy: number,
+      radius: number,
+      speedFactor: number,
+      intensity: number,
+    ) => {
+      const glyphs = glyphsRef.current;
+      const ring = ringsRef.current[1];
+      if (!ring) return;
+      const actualRadius = ring.radiusRatio * radius;
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(ring.rotation);
+      ctx.font = "10px 'Space Mono', monospace";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      glyphs.forEach((glyph) => {
+        glyph.angle += glyph.speed * speedFactor * -ring.direction;
+        glyph.life += 16 * speedFactor;
+        if (glyph.life >= glyph.maxLife) {
+          glyph.life = 0;
+          glyph.char = glyph.char === "0" ? "1" : glyph.char;
+        }
+        const alpha = Math.min(glyph.alpha, 0.12) * intensity;
+        const x = Math.cos(glyph.angle) * actualRadius;
+        const y = Math.sin(glyph.angle) * actualRadius;
+        ctx.save();
+        ctx.rotate(glyph.angle);
+        ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+        ctx.fillText(glyph.char, x, y);
+        ctx.restore();
+      });
+      ctx.restore();
+    };
+
+    const drawOuterGates = (
+      ctx: CanvasRenderingContext2D,
+      cx: number,
+      cy: number,
+      radius: number,
+      intensity: number,
+    ) => {
+      const ring = ringsRef.current[2];
+      if (!ring) return;
+      const segments = 24;
+      const actualRadius = ring.radiusRatio * radius;
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(ring.rotation);
+      ctx.strokeStyle = `rgba(255, 255, 255, ${0.08 * intensity})`;
+      ctx.lineWidth = 3;
+      for (let i = 0; i < segments; i++) {
+        const angle = (i / segments) * Math.PI * 2;
+        const x = Math.cos(angle) * actualRadius;
+        const y = Math.sin(angle) * actualRadius;
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+        ctx.beginPath();
+        ctx.moveTo(0, -ring.thickness * 0.4);
+        ctx.lineTo(0, ring.thickness * 0.4);
+        ctx.stroke();
+        ctx.restore();
+      }
+      ctx.restore();
+    };
+
+    const drawFlows = (
+      ctx: CanvasRenderingContext2D,
+      cx: number,
+      cy: number,
+      radius: number,
+      speedFactor: number,
+      intensity: number,
+    ) => {
+      const flows = flowsRef.current;
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.font = "8px 'Space Mono', monospace";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      flows.forEach((flow) => {
+        flow.angle += flow.speed * speedFactor;
+        flow.life += 16 * speedFactor;
+        if (flow.life >= flow.maxLife) {
+          flow.angle = Math.random() * Math.PI * 2;
+          flow.radiusRatio = 0.3 + Math.random() * 0.5;
+          flow.char = flow.char === "0" ? "1" : flow.char;
+          flow.life = 0;
+          flow.maxLife = 500 + Math.random() * 800;
+          flow.alpha = 0.06 + Math.random() * 0.06;
+        }
+        const actualRadius = flow.radiusRatio * radius;
+        const x = Math.cos(flow.angle) * actualRadius;
+        const y = Math.sin(flow.angle) * actualRadius;
+        const alpha = flow.alpha * (1 - flow.life / flow.maxLife) * intensity;
+        ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+        ctx.fillText(flow.char, x, y);
+      });
+      ctx.restore();
+    };
+
+    const drawPulse = (
+      ctx: CanvasRenderingContext2D,
+      cx: number,
+      cy: number,
+      radius: number,
+      speedFactor: number,
+      intensity: number,
+    ) => {
+      const pulse = pulseRef.current;
+      pulse.timer -= 16 * speedFactor;
+      if (!pulse.active && pulse.timer <= 0) {
+        pulse.active = true;
+        pulse.progress = 0;
+        pulse.duration = 1400 + Math.random() * 600;
+        pulse.timer = 4000 + Math.random() * 2000;
+      }
+
+      if (pulse.active) {
+        pulse.progress += (16 * speedFactor) / pulse.duration;
+        if (pulse.progress >= 1) {
+          pulse.active = false;
+        } else {
+          const pulseRadius = radius * (0.35 + pulse.progress * 0.65);
+          const alpha = (0.12 - pulse.progress * 0.12) * intensity;
+          ctx.save();
+          ctx.globalCompositeOperation = "screen";
+          ctx.strokeStyle = `rgba(255, 109, 0, ${alpha})`;
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          ctx.arc(cx, cy, pulseRadius, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
+    };
 
     const draw = (time: number) => {
       const delta = Math.min(time - lastTime, 60);
@@ -205,213 +439,6 @@ export const DynamicBackground = () => {
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
     };
   }, [prefersReducedMotion]);
-
-  const drawAura = (
-    ctx: CanvasRenderingContext2D,
-    cx: number,
-    cy: number,
-    radius: number,
-    time: number,
-    intensity: number,
-  ) => {
-    const auraGradient = ctx.createRadialGradient(
-      cx + Math.sin(time * 0.0002) * 10,
-      cy + Math.cos(time * 0.00015) * 10,
-      radius * 0.1,
-      cx,
-      cy,
-      radius * 1.2,
-    );
-    auraGradient.addColorStop(0, `rgba(255, 109, 0, ${0.04 * intensity})`);
-    auraGradient.addColorStop(0.4, `rgba(255, 255, 255, ${0.02 * intensity})`);
-    auraGradient.addColorStop(1, "rgba(10, 10, 10, 0)");
-    ctx.save();
-    ctx.globalCompositeOperation = "screen";
-    ctx.fillStyle = auraGradient;
-    ctx.beginPath();
-    ctx.arc(cx, cy, radius * 1.2, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-  };
-
-  const drawRings = (
-    ctx: CanvasRenderingContext2D,
-    cx: number,
-    cy: number,
-    radius: number,
-    speedFactor: number,
-    intensity: number,
-  ) => {
-    const rings = ringsRef.current;
-    const parallax = {
-      x: (mouseRef.current.x - cx) * -0.004,
-      y: (mouseRef.current.y - cy) * -0.004,
-    };
-
-    rings.forEach((ring, index) => {
-      ring.rotation += ring.speed * ring.direction * speedFactor * intensity;
-      const actualRadius = ring.radiusRatio * radius;
-      ctx.save();
-      ctx.translate(cx + parallax.x, cy + parallax.y);
-      ctx.rotate(ring.rotation);
-      ctx.lineWidth = ring.thickness;
-      ctx.globalAlpha = 0.15 * intensity;
-      const gradient = ctx.createLinearGradient(
-        -actualRadius,
-        0,
-        actualRadius,
-        0,
-      );
-      gradient.addColorStop(0, "rgba(255, 255, 255, 0)");
-      gradient.addColorStop(0.5, index === 0 ? "rgba(255, 255, 255, 0.35)" : "rgba(255, 109, 0, 0.25)");
-      gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
-      ctx.strokeStyle = gradient;
-      ctx.beginPath();
-      ctx.arc(0, 0, actualRadius, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.restore();
-    });
-  };
-
-  const drawGlyphs = (
-    ctx: CanvasRenderingContext2D,
-    cx: number,
-    cy: number,
-    radius: number,
-    speedFactor: number,
-    intensity: number,
-  ) => {
-    const glyphs = glyphsRef.current;
-    const ring = ringsRef.current[1];
-    if (!ring) return;
-    const actualRadius = ring.radiusRatio * radius;
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(ring.rotation);
-    ctx.font = "10px 'Space Mono', monospace";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    glyphs.forEach((glyph) => {
-      glyph.angle += glyph.speed * speedFactor * -ring.direction;
-      glyph.life += 16 * speedFactor;
-      if (glyph.life >= glyph.maxLife) {
-        glyph.life = 0;
-        glyph.char = glyph.char === "0" ? "1" : glyph.char;
-      }
-      const alpha = Math.min(glyph.alpha, 0.12) * intensity;
-      const x = Math.cos(glyph.angle) * actualRadius;
-      const y = Math.sin(glyph.angle) * actualRadius;
-      ctx.save();
-      ctx.rotate(glyph.angle);
-      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-      ctx.fillText(glyph.char, x, y);
-      ctx.restore();
-    });
-    ctx.restore();
-  };
-
-  const drawOuterGates = (
-    ctx: CanvasRenderingContext2D,
-    cx: number,
-    cy: number,
-    radius: number,
-    intensity: number,
-  ) => {
-    const ring = ringsRef.current[2];
-    if (!ring) return;
-    const segments = 24;
-    const actualRadius = ring.radiusRatio * radius;
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(ring.rotation);
-    ctx.strokeStyle = `rgba(255, 255, 255, ${0.08 * intensity})`;
-    ctx.lineWidth = 3;
-    for (let i = 0; i < segments; i++) {
-      const angle = (i / segments) * Math.PI * 2;
-      const x = Math.cos(angle) * actualRadius;
-      const y = Math.sin(angle) * actualRadius;
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.rotate(angle);
-      ctx.beginPath();
-      ctx.moveTo(0, -ring.thickness * 0.4);
-      ctx.lineTo(0, ring.thickness * 0.4);
-      ctx.stroke();
-      ctx.restore();
-    }
-    ctx.restore();
-  };
-
-  const drawFlows = (
-    ctx: CanvasRenderingContext2D,
-    cx: number,
-    cy: number,
-    radius: number,
-    speedFactor: number,
-    intensity: number,
-  ) => {
-    const flows = flowsRef.current;
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.font = "8px 'Space Mono', monospace";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    flows.forEach((flow) => {
-      flow.angle += flow.speed * speedFactor;
-      flow.life += 16 * speedFactor;
-      if (flow.life >= flow.maxLife) {
-        flow.angle = Math.random() * Math.PI * 2;
-        flow.radiusRatio = 0.3 + Math.random() * 0.5;
-        flow.char = flow.char === "0" ? "1" : flow.char;
-        flow.life = 0;
-        flow.maxLife = 500 + Math.random() * 800;
-        flow.alpha = 0.06 + Math.random() * 0.06;
-      }
-      const actualRadius = flow.radiusRatio * radius;
-      const x = Math.cos(flow.angle) * actualRadius;
-      const y = Math.sin(flow.angle) * actualRadius;
-      const alpha = flow.alpha * (1 - flow.life / flow.maxLife) * intensity;
-      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-      ctx.fillText(flow.char, x, y);
-    });
-    ctx.restore();
-  };
-
-  const drawPulse = (
-    ctx: CanvasRenderingContext2D,
-    cx: number,
-    cy: number,
-    radius: number,
-    speedFactor: number,
-    intensity: number,
-  ) => {
-    const pulse = pulseRef.current;
-    pulse.timer -= 16 * speedFactor;
-    if (!pulse.active && pulse.timer <= 0) {
-      pulse.active = true;
-      pulse.progress = 0;
-      pulse.duration = 1400 + Math.random() * 600;
-      pulse.timer = 4000 + Math.random() * 2000;
-    }
-
-    if (pulse.active) {
-      pulse.progress += (16 * speedFactor) / pulse.duration;
-      if (pulse.progress >= 1) {
-        pulse.active = false;
-      } else {
-        const pulseRadius = radius * (0.35 + pulse.progress * 0.65);
-        const alpha = (0.12 - pulse.progress * 0.12) * intensity;
-        ctx.save();
-        ctx.globalCompositeOperation = "screen";
-        ctx.strokeStyle = `rgba(255, 109, 0, ${alpha})`;
-        ctx.lineWidth = 4;
-        ctx.beginPath();
-        ctx.arc(cx, cy, pulseRadius, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.restore();
-      }
-    }
-  };
 
   if (prefersReducedMotion) {
     return (

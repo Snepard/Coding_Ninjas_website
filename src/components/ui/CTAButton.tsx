@@ -1,8 +1,8 @@
 "use client";
 
 import type { Route } from "next";
-import Link from "next/link";
 import { forwardRef } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { trackEvent } from "@/lib/analytics";
@@ -32,7 +32,6 @@ const variants = {
     "text-foreground/80 hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
 };
 
-const MotionLink = motion.create(Link);
 const MotionAnchor = motion.create("a");
 
 export const CTAButton = forwardRef<HTMLButtonElement, CTAButtonProps>(
@@ -48,6 +47,7 @@ export const CTAButton = forwardRef<HTMLButtonElement, CTAButtonProps>(
     },
     ref,
   ) => {
+    const router = useRouter();
     const sharedClasses = cn(
       "inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-200 focus-visible:outline-none",
       "hover:text-inherit active:text-inherit focus:text-inherit",
@@ -77,39 +77,50 @@ export const CTAButton = forwardRef<HTMLButtonElement, CTAButtonProps>(
       href?.startsWith("tel:");
     const isHashLink = href?.includes("#");
 
-    if (href) {
-      if (!isExternal && !isHashLink) {
-        return (
-          <MotionLink
-            href={href as Route}
-            className={sharedClasses}
-            whileHover={{ scale: variant === "ghost" ? 1 : 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            scroll={href.startsWith("#")}
-            onClick={handleClick}
-          >
-            {children}
-          </MotionLink>
-        );
-      }
-
+    // If it's an internal navigation link (not external, not hash), use button instead of link
+    // This hides the URL preview in the browser status bar
+    if (href && !isExternal && !isHashLink) {
       return (
-        <MotionAnchor
-          href={href}
+        <motion.button
           className={sharedClasses}
           whileHover={{ scale: variant === "ghost" ? 1 : 1.02 }}
           whileTap={{ scale: 0.98 }}
-          target={isExternal && href?.startsWith("http") ? "_blank" : undefined}
-          rel={
-            isExternal && href?.startsWith("http")
-              ? "noopener noreferrer"
-              : undefined
-          }
-          onClick={handleClick}
+          onClick={(e) => {
+            handleClick(e as unknown as React.MouseEvent<HTMLAnchorElement>);
+            router.push(href as Route);
+          }}
+          ref={ref}
+          {...props}
         >
           {children}
-        </MotionAnchor>
+        </motion.button>
       );
+    }
+
+    if (href) {
+      if (isExternal || isHashLink) {
+        // External links and hash links still use anchor tags
+        return (
+          <MotionAnchor
+            href={href}
+            className={sharedClasses}
+            whileHover={{ scale: variant === "ghost" ? 1 : 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            target={
+              isExternal && href?.startsWith("http") ? "_blank" : undefined
+            }
+            rel={
+              isExternal && href?.startsWith("http")
+                ? "noopener noreferrer"
+                : undefined
+            }
+            onClick={handleClick}
+            title={typeof children === "string" ? children : ""}
+          >
+            {children}
+          </MotionAnchor>
+        );
+      }
     }
 
     return (
