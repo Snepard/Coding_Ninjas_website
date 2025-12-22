@@ -176,7 +176,7 @@ export async function POST(req: Request) {
             to: ADMIN_EMAIL,
             subject: `New Application: ${name}`,
             html: `
-              <p><b>${name}</b> applied for <b>${position}</b></p>
+              <p><b>${name}</b> applied for <b>${role} (${team})</b></p>
               <p>Email: ${chitkaraEmail}</p>
               <p>Resume: ${resumeUrl || "N/A"}</p>
             `,

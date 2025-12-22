@@ -8,8 +8,8 @@ import { LenisProvider } from "@/providers/LenisProvider";
 import { SkipToContent } from "@/components/shared/SkipToContent";
 import { CookieConsent } from "@/components/shared/CookieConsent";
 import { GuidedTourOverlay } from "@/components/guided-tour/GuidedTourOverlay";
-import { DynamicBackground } from "@/components/global/DynamicBackground";
 import { CustomCursor } from "@/components/global/CustomCursor";
+import InteractiveBackground from "@/components/global/InteractiveBackground";
 import {
   eventsJsonLd,
   getDefaultMetadata,
@@ -45,7 +45,7 @@ export default function RootLayout({
       <body
         className={`${sora.variable} ${inter.variable} bg-background text-foreground antialiased`}
       >
-        <DynamicBackground />
+        <InteractiveBackground />
         <CustomCursor />
         <SkipToContent />
         <LenisProvider>

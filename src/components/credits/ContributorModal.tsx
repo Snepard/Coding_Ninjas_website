@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import React from "react";
+import Image from "next/image";
 import { Linkedin, Github } from "lucide-react";
 
 type Contributor = {
@@ -49,12 +50,15 @@ export default function ContributorModal({
       >
         <div className="flex gap-6 p-6">
           {/* profile image */}
-          <div className="w-28 h-28 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100 dark:bg-slate-800">
+          <div className="w-28 h-28 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100 dark:bg-slate-800 relative">
             {contributor.image ? (
-              <img
+              <Image
                 src={contributor.image}
-                alt={contributor.title}
-                className="w-full h-full object-cover"
+                alt={contributor.title ?? "Contributor"}
+                fill
+                sizes="112px"
+                className="object-cover"
+                priority={false}
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-lg font-semibold text-gray-500">

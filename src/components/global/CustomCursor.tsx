@@ -50,7 +50,6 @@ export const CustomCursor = () => {
   const animationFrameRef = useRef<number | null>(null);
   const lastMouseXRef = useRef(0);
   const lastMouseYRef = useRef(0);
-  const throttleRef = useRef(false);
   useEffect(() => {
     const checkMobile = () => {
       const isMobileDevice =
@@ -104,12 +103,6 @@ export const CustomCursor = () => {
     document.body.classList.add("custom-cursor-active");
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (throttleRef.current) return;
-      throttleRef.current = true;
-      setTimeout(() => {
-        throttleRef.current = false;
-      }, 16); // ~60fps
-
       if (!isVisible) setIsVisible(true);
 
       targetXRef.current = e.clientX;
@@ -167,18 +160,13 @@ export const CustomCursor = () => {
     const animate = () => {
       if (!cursorRef.current || !cursorInnerRef.current) return;
 
-      /* TRAIL CANVAS - COMMENTED OUT FOR PERFORMANCE
-      const canvas = trailCanvasRef.current;
-      const ctx = canvas?.getContext("2d", { alpha: true });
-      */
-
-      const interpolationFactor = 0.15;
+      const interpolationFactor = 0.25; // Increased for faster cursor tracking on low-end devices
       cursorXRef.current +=
         (targetXRef.current - cursorXRef.current) * interpolationFactor;
       cursorYRef.current +=
         (targetYRef.current - cursorYRef.current) * interpolationFactor;
 
-      const rotationSpeed = isHovering ? 2 : 0.4 + Math.random() * 0.4;
+      const rotationSpeed = isHovering ? 3 : 0.5; // Reduced random variation for consistency
       if (!prefersReducedMotion) {
         rotationRef.current += rotationSpeed;
         if (rotationRef.current >= 360) rotationRef.current = 0;
@@ -187,91 +175,6 @@ export const CustomCursor = () => {
       // Use GPU-accelerated transforms only - translate3d for hardware acceleration
       cursorRef.current.style.transform = `translate3d(${cursorXRef.current}px, ${cursorYRef.current}px, 0) translate(-50%, -50%)`;
       cursorInnerRef.current.style.transform = `rotate(${rotationRef.current}deg)`;
-
-      /* TRAIL POINTS - COMMENTED OUT FOR PERFORMANCE
-      const dx = cursorXRef.current - lastMouseXRef.current;
-      const dy = cursorYRef.current - lastMouseYRef.current;
-      const velocity = Math.sqrt(dx * dx + dy * dy);
-
-      if (velocity > 0.1) {
-        const trailSize = isHovering ? 10 : 6 + Math.random() * 4;
-        const upwardDrift = 0.2 + Math.random() * 0.15;
-        const horizontalStretch = Math.abs(dx) * 0.1;
-
-        trailPointsRef.current.push({
-          x: cursorXRef.current,
-          y: cursorYRef.current,
-          alpha: 1,
-          size: trailSize,
-          vx: dx * 0.05,
-          vy: -upwardDrift,
-        });
-
-        if (trailPointsRef.current.length > (isHovering ? 20 : 15)) {
-          trailPointsRef.current.shift();
-        }
-      }
-
-      lastMouseXRef.current = cursorXRef.current;
-      lastMouseYRef.current = cursorYRef.current;
-
-      if (ctx && canvas) {
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-        ctx.clearRect(0, 0, width, height);
-
-        trailPointsRef.current = trailPointsRef.current.filter((point) => {
-          point.alpha -= isHovering ? 0.06 : 0.04;
-          point.size -= 0.25;
-          point.x += point.vx;
-          point.y += point.vy;
-
-          if (point.alpha <= 0 || point.size <= 0) {
-            return false;
-          }
-
-          const stretchX = 1 + Math.abs(point.vx) * 0.3;
-          const stretchY = 1 - Math.abs(point.vy) * 0.2;
-
-          ctx.save();
-          ctx.globalAlpha = point.alpha * 0.9;
-          ctx.shadowBlur = 4;
-          ctx.shadowColor = "rgba(216, 216, 216, 0.5)";
-          ctx.fillStyle = "#d8d8d8";
-
-          ctx.beginPath();
-          ctx.ellipse(
-            point.x,
-            point.y,
-            point.size * stretchX,
-            point.size * stretchY,
-            0,
-            0,
-            Math.PI * 2,
-          );
-          ctx.fill();
-
-          ctx.shadowBlur = 2;
-          ctx.globalAlpha = point.alpha * 0.5;
-          ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
-          ctx.beginPath();
-          ctx.ellipse(
-            point.x,
-            point.y,
-            point.size * 0.6 * stretchX,
-            point.size * 0.6 * stretchY,
-            0,
-            0,
-            Math.PI * 2,
-          );
-          ctx.fill();
-
-          ctx.restore();
-
-          return true;
-        });
-      }
-      */
 
       animationFrameRef.current = requestAnimationFrame(animate);
     };
@@ -321,13 +224,12 @@ export const CustomCursor = () => {
           }}
         >
           <div
-            className={`transition-all duration-200 ${
-              isHovering ? "scale-[1.3]" : "scale-100"
-            }`}
+            className={`${isHovering ? "scale-[1.3]" : "scale-100"}`}
             style={{
+              transition: isHovering ? "transform 200ms ease-out" : "none",
               filter: isHovering
-                ? "drop-shadow(0 0 12px rgba(255, 109, 0, 1)) drop-shadow(0 0 6px rgba(255, 109, 0, 0.8))"
-                : "drop-shadow(0 0 4px rgba(255, 109, 0, 0.5))",
+                ? "drop-shadow(0 0 8px rgba(255, 109, 0, 0.8))"
+                : "drop-shadow(0 0 2px rgba(255, 109, 0, 0.3))",
             }}
           >
             <ShurikenSVG />

@@ -1,12 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { CTAButton } from "../ui/CTAButton";
 import { motionDefaults } from "@/lib/motion";
 import { useMediaQuery } from "@/lib/hooks";
-import NinjaRunnerGame from "../games/NinjaRunnerGame";
 import { Press_Start_2P } from "next/font/google";
+
+// Lazy load the game component
+const NinjaRunnerGame = dynamic(() => import("../games/NinjaRunnerGame"), {
+  loading: () => (
+    <div className="w-full h-[220px] bg-black/20 rounded-lg flex items-center justify-center">
+      <div className="animate-pulse text-white/60">Loading game...</div>
+    </div>
+  ),
+  ssr: false,
+});
 
 const pressStart = Press_Start_2P({
   subsets: ["latin"],
