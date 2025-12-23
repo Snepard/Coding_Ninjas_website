@@ -9,12 +9,11 @@ interface Params {
 
 export async function GET(
   req: NextRequest,
-  context: { params: Params | Promise<Params> },
+  context: { params: Promise<Params> },
 ) {
   try {
-    // If params is a Promise, await it
-    const { filename } =
-      context.params instanceof Promise ? await context.params : context.params;
+    // Await params as required by Next.js 15
+    const { filename } = await context.params;
 
     const filePath = path.join("/tmp", filename);
 

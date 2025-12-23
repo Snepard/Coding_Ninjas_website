@@ -1,125 +1,74 @@
 "use client";
 
-import React from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 
-function FireGlassCard({
+function TeamCard({
   title,
   description,
+  index,
 }: {
   title: string;
   description: string;
+  index: number;
 }) {
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
-    <div className="relative group w-72 h-44 rounded-2xl overflow-hidden bg-white/10 backdrop-blur-xl border border-white/20 shadow-[0_4px_30px_rgba(255,80,0,0.25)] flex items-center justify-center">
-      <svg
-        className="absolute inset-0 w-full h-full pointer-events-none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <defs>
-          <linearGradient id="fireGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#ff3c00">
-              <animate
-                attributeName="offset"
-                values="0;1;0"
-                dur="2.5s"
-                repeatCount="indefinite"
-              />
-            </stop>
-            <stop offset="25%" stopColor="#ff9a00">
-              <animate
-                attributeName="offset"
-                values="0.25;0.75;0.25"
-                dur="2.5s"
-                repeatCount="indefinite"
-              />
-            </stop>
-            <stop offset="75%" stopColor="#ffff00">
-              <animate
-                attributeName="offset"
-                values="0.75;1;0.75"
-                dur="2.5s"
-                repeatCount="indefinite"
-              />
-            </stop>
-            <stop offset="100%" stopColor="#ff3c00" />
-          </linearGradient>
-
-          <filter id="fireGlow">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
-
-        <rect
-          x="4"
-          y="4"
-          width="calc(100% - 8px)"
-          height="calc(100% - 8px)"
-          rx="16"
-          ry="16"
-          fill="none"
-          stroke="url(#fireGradient)"
-          strokeWidth="4"
-          strokeDasharray="1200"
-          strokeDashoffset="1200"
-          className="animate-[fireFlow_4s_linear_infinite]"
-          style={{ filter: "url(#fireGlow)" }}
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: index * 0.08 }}
+      viewport={{ once: true, margin: "-80px" }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="h-full"
+    >
+      <div className="relative h-full rounded-xl border border-white/10 bg-gradient-to-br from-white/5 via-white/[0.02] to-white/[0.01] backdrop-blur-lg p-8 overflow-hidden group hover:border-primary/40 transition-all duration-300">
+        {/* Dynamic gradient background on hover */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{
+            opacity: isHovered ? 0.15 : 0,
+            scale: isHovered ? 1 : 0.8,
+          }}
+          transition={{ duration: 0.4 }}
+          className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-primary to-primary/40 rounded-full blur-3xl pointer-events-none"
         />
-      </svg>
 
-      <div className="relative z-10 flex flex-col items-center text-center px-4">
-        <h3 className="text-xl font-heading tracking-wide text-foreground">
-          {title}
-        </h3>
-        <p className="text-sm text-foreground/70 mt-2">{description}</p>
+        {/* Content */}
+        <div className="relative z-10 flex flex-col h-full">
+          {/* Title with color animation */}
+          <motion.h3
+            animate={{ color: isHovered ? "#ff6d00" : "#ffffff" }}
+            transition={{ duration: 0.3 }}
+            className="text-2xl md:text-3xl font-heading font-bold mb-4 leading-tight"
+          >
+            {title}
+          </motion.h3>
+
+          {/* Description */}
+          <motion.p
+            animate={{ opacity: isHovered ? 0.85 : 0.7 }}
+            transition={{ duration: 0.3 }}
+            className="text-sm md:text-base text-foreground/70 leading-relaxed mb-6 flex-grow"
+          >
+            {description}
+          </motion.p>
+
+          {/* Animated bottom line */}
+          <motion.div
+            initial={{ width: "0%", opacity: 0 }}
+            animate={{
+              width: isHovered ? "48px" : "0%",
+              opacity: isHovered ? 1 : 0,
+            }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="h-1 bg-gradient-to-r from-primary to-primary/40 rounded-full"
+          />
+        </div>
       </div>
-
-      <style jsx>{`
-        @keyframes fireFlow {
-          0% {
-            stroke-dashoffset: 1200;
-            filter: drop-shadow(0 0 6px orange);
-          }
-          50% {
-            stroke-dashoffset: 600;
-            filter: drop-shadow(0 0 20px yellow);
-          }
-          100% {
-            stroke-dashoffset: 0;
-            filter: drop-shadow(0 0 10px red);
-          }
-        }
-        @keyframes flicker {
-          0%,
-          19%,
-          21%,
-          23%,
-          25%,
-          54%,
-          56%,
-          100% {
-            opacity: 1;
-          }
-          20%,
-          24%,
-          55% {
-            opacity: 0.5;
-          }
-          22% {
-            opacity: 0.3;
-          }
-        }
-        .group:hover svg rect {
-          animation:
-            fireFlow 2.5s linear infinite,
-            flicker 0.5s infinite;
-        }
-      `}</style>
-    </div>
+    </motion.div>
   );
 }
 
@@ -137,31 +86,76 @@ export default function TeamsPage() {
   ];
 
   return (
-    <main
-      className={`relative min-h-screen flex flex-col items-center justify-center text-foreground p-10 space-y-16`}
-    >
-      <motion.h1
-        // Updated font size to be responsive, matching Hero.tsx
-        className="text-4xl font-heading font-semibold text-foreground md:text-6xl text-center"
-        initial={{ opacity: 0, y: -80, scale: 0.8 }}
-        whileInView={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 1.2, type: "spring", bounce: 0.4 }}
-        viewport={{ once: true }}
-      >
-        Meet Our Teams
-      </motion.h1>
+    <section className="relative py-20 sm:py-28 lg:py-32 px-4 sm:px-6 overflow-hidden">
+      {/* Vibrant background accents */}
+      <div className="absolute top-0 right-0 w-72 h-72 bg-primary/20 rounded-full blur-3xl -z-10 opacity-30 animate-pulse" />
+      <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-primary/15 rounded-full blur-3xl -z-10 opacity-20" />
 
-      <motion.div
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12"
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, delay: 0.2 }}
-        viewport={{ once: true }}
-      >
-        {teams.map((team, i) => (
-          <FireGlassCard key={i} title={team.name} description={team.desc} />
-        ))}
-      </motion.div>
-    </main>
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <motion.div
+          className="mb-16 sm:mb-20"
+          initial={{ opacity: 0, y: -32 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+          viewport={{ once: true }}
+        >
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-xs uppercase tracking-[0.3em] text-primary font-semibold mb-4 flex items-center gap-2"
+          >
+            <span className="inline-block w-2 h-2 rounded-full bg-primary animate-pulse" />
+            Our Teams
+          </motion.p>
+
+          <motion.h2
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+            className="text-5xl sm:text-6xl md:text-7xl font-heading font-bold text-foreground leading-tight mb-6"
+          >
+            Meet the{" "}
+            <motion.span
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="bg-gradient-to-r from-primary via-orange-400 to-primary bg-[length:200%_auto] text-transparent bg-clip-text"
+            >
+              Talent
+            </motion.span>
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="text-base sm:text-lg text-foreground/70 max-w-2xl leading-relaxed"
+          >
+            Exceptional teams driving innovation. From code to creativity,
+            we&apos;re building the future together.
+          </motion.p>
+        </motion.div>
+
+        {/* Grid */}
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          viewport={{ once: true }}
+        >
+          {teams.map((team, i) => (
+            <TeamCard
+              key={i}
+              title={team.name}
+              description={team.desc}
+              index={i}
+            />
+          ))}
+        </motion.div>
+      </div>
+    </section>
   );
 }

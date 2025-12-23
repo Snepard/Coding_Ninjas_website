@@ -9,8 +9,18 @@ const config = {
     "\\.(css|less|scss|sass)$": "identity-obj-proxy",
   },
   transform: {
-    "^.+\\.(ts|tsx)$": ["ts-jest", { tsconfig: "<rootDir>/tsconfig.json" }],
+    "^.+\\.(ts|tsx)$": [
+      "ts-jest",
+      {
+        tsconfig: {
+          jsx: "react-jsx",
+        },
+      },
+    ],
   },
+  transformIgnorePatterns: [
+    "node_modules/(?!(framer-motion|motion)/)",
+  ],
 };
 
 module.exports = config;

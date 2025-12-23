@@ -21,8 +21,10 @@ if (!dbName) {
 }
 
 declare global {
+  // eslint-disable-next-line no-var
   var _mongoClientPromise: Promise<MongoClient> | undefined;
   // Flag to avoid repeated console warnings during hot-reloads
+  // eslint-disable-next-line no-var
   var __MONGODB_DB_WARNING_SHOWN: boolean | undefined;
 }
 

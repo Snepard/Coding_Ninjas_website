@@ -20,14 +20,14 @@ describe("CTAButton", () => {
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
 
-  it("renders as a link when href is provided", () => {
+  it("renders as an anchor for external links", () => {
     render(
-      <CTAButton href="/about" variant="secondary">
+      <CTAButton href="https://example.com" variant="secondary">
         Learn more
       </CTAButton>,
     );
 
     const link = screen.getByRole("link", { name: /learn more/i });
-    expect(link).toHaveAttribute("href", "/about");
+    expect(link).toHaveAttribute("href", "https://example.com");
   });
 });

@@ -1,0 +1,67 @@
+{
+  "root": true,
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "plugins": ["react", "@typescript-eslint", "react-hooks"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:react/jsx-runtime",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react-hooks/recommended"
+  ],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "rules": {
+    "react/prop-types": "off",
+    "react/no-unknown-property": [
+      "error",
+      {
+        "ignore": [
+          "jsx",
+          "global",
+          "geometry",
+          "castShadow",
+          "receiveShadow",
+          "metalness",
+          "roughness",
+          "envMapIntensity",
+          "position",
+          "args",
+          "intensity",
+          "shadow-mapSize-width",
+          "shadow-mapSize-height"
+        ]
+      }
+    ],
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      { "argsIgnorePattern": "^_" }
+    ],
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/triple-slash-reference": "off",
+    "no-empty": ["error", { "allowEmptyCatch": true }],
+    "no-var": "error"
+  },
+  "ignorePatterns": [
+    ".next/**",
+    "out/**",
+    "build/**",
+    "node_modules/**",
+    "next-env.d.ts"
+  ]
+}

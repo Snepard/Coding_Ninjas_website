@@ -33,45 +33,57 @@ export const Header = () => {
   // fetch current user (if any) so header can show logged-in state
   useEffect(() => {
     let mounted = true;
-    let checkInterval: NodeJS.Timeout | null = null;
+    const CACHE_KEY = "auth_cache";
+    const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-    const fetchMe = async () => {
+    const fetchMe = async (forceRefresh = false) => {
+      // Check cache first
+      if (!forceRefresh) {
+        const cached = sessionStorage.getItem(CACHE_KEY);
+        if (cached) {
+          const { user, timestamp } = JSON.parse(cached);
+          if (Date.now() - timestamp < CACHE_DURATION) {
+            if (mounted) setUser(user);
+            return;
+          }
+        }
+      }
+
       try {
         const res = await fetch("/api/hiring/me", { credentials: "include" });
         if (!res.ok) {
           if (mounted) setUser(null);
+          sessionStorage.setItem(
+            CACHE_KEY,
+            JSON.stringify({ user: null, timestamp: Date.now() }),
+          );
           return;
         }
         const data = await res.json();
-        if (mounted) setUser(data.user || null);
-      } catch (err) {
-        console.error("Header: fetch error:", err);
+        const userData = data.user || null;
+        if (mounted) setUser(userData);
+        sessionStorage.setItem(
+          CACHE_KEY,
+          JSON.stringify({ user: userData, timestamp: Date.now() }),
+        );
+      } catch {
         if (mounted) setUser(null);
       }
     };
 
-    // Fetch user immediately on mount
+    // Fetch user immediately on mount (with cache)
     fetchMe();
 
     // Refetch when page visibility changes (user returns from signin/signup page)
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
-        fetchMe();
+        fetchMe(true); // Force refresh on visibility change
       }
     };
 
-    // Refetch when user signs in - check multiple times to be sure
+    // Refetch when user signs in
     const handleUserSignin = () => {
-      fetchMe();
-      // Check again after 100ms to ensure we catch the auth state
-      if (checkInterval) clearInterval(checkInterval);
-      checkInterval = setInterval(() => {
-        if (mounted) fetchMe();
-      }, 100);
-      // Stop checking after 1 second
-      setTimeout(() => {
-        if (checkInterval) clearInterval(checkInterval);
-      }, 1000);
+      fetchMe(true); // Force refresh on signin
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
@@ -79,7 +91,6 @@ export const Header = () => {
 
     return () => {
       mounted = false;
-      if (checkInterval) clearInterval(checkInterval);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("user-signin", handleUserSignin);
     };

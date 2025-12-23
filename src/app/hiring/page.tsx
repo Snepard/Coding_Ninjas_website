@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Rocket, Lightbulb, Target, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface Opening {
@@ -89,20 +89,6 @@ export default function CareersPage() {
       </div>
     );
   }
-
-  // --- Animation Variants ---
-
-  // This controls the shine bar moving across the card
-  const shineVariants = {
-    rest: { x: "-100%", opacity: 0 },
-    hover: {
-      x: "150%",
-      opacity: 1,
-      transition: {
-        duration: 0.6,
-      },
-    },
-  };
 
   return (
     // REMOVED bg-black so it uses your site's background

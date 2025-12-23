@@ -1,7 +1,6 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Layers } from "lucide-react";
 import {
   Linkedin,
   Instagram,
@@ -15,14 +14,7 @@ import {
   Target,
   BookOpen,
   Puzzle,
-  Code2,
-  Cpu,
-  Database,
-  Cloud,
-  Server,
   Brain,
-  Binary,
-  CircuitBoard,
   GitBranch,
   Workflow,
   BrainCircuit,
@@ -32,7 +24,7 @@ import {
   Eye,
   Sparkles,
 } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, memo } from "react";
 import Image from "next/image";
 import CountUp from "react-countup";
 import { achievements } from "@/data/club";
@@ -75,18 +67,6 @@ interface Pillar {
   branch?: string;
   [key: string]: unknown;
 }
-
-// Tech badges data
-const techBadges = [
-  { icon: <Code2 className="w-4 h-4" />, label: "Full Stack" },
-  { icon: <Cpu className="w-4 h-4" />, label: "AI/ML" },
-  { icon: <Database className="w-4 h-4" />, label: "Database" },
-  { icon: <Cloud className="w-4 h-4" />, label: "Cloud" },
-  { icon: <Server className="w-4 h-4" />, label: "DevOps" },
-  { icon: <Brain className="w-4 h-4" />, label: "Problem Solving" },
-  { icon: <Binary className="w-4 h-4" />, label: "Algorithms" },
-  { icon: <CircuitBoard className="w-4 h-4" />, label: "System Design" },
-];
 
 // Specialized tech elements for first pillar and leader
 const specialTechElements = [
@@ -142,9 +122,6 @@ export default function AboutUsPage() {
   );
   const [selectedLeader, setSelectedLeader] = useState<Leader | null>(null);
   const [selectedPillar, setSelectedPillar] = useState<Pillar | null>(null);
-  const [popupFlipped, setPopupFlipped] = useState<{ [key: string]: boolean }>(
-    {},
-  );
   const containerRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
 
@@ -192,14 +169,6 @@ export default function AboutUsPage() {
     leadershipTeam.slice(1, 3),
     leadershipTeam.slice(3, 6),
   ];
-
-  // Handle popup flip
-  const handlePopupFlip = (memberId: string) => {
-    setPopupFlipped((prev) => ({
-      ...prev,
-      [memberId]: !prev[memberId],
-    }));
-  };
 
   return (
     <main
@@ -279,10 +248,9 @@ export default function AboutUsPage() {
                 return (
                   <motion.div
                     key={item.metric}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
                     transition={{ delay: 1.2 + index * 0.1 }}
-                    whileHover={{ scale: 1.05, y: -5 }}
                     className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4 md:p-6 hover:border-orange-500/50 transition-all duration-300"
                   >
                     <div className="flex justify-center mb-3">
@@ -381,7 +349,7 @@ export default function AboutUsPage() {
                 className="flex justify-center"
               >
                 <div className="w-full max-w-sm sm:max-w-md md:max-w-lg relative">
-                  <MemberCard
+                  <MemoizedMemberCard
                     member={pillars[0]}
                     onClick={() => setSelectedPillar(pillars[0])}
                   />
@@ -446,7 +414,7 @@ export default function AboutUsPage() {
               className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto"
             >
               {pillars.slice(1).map((member, idx) => (
-                <MemberCard
+                <MemoizedMemberCard
                   key={member.name}
                   member={member}
                   onClick={() => setSelectedPillar(member)}
@@ -564,7 +532,7 @@ export default function AboutUsPage() {
                 transition={{ duration: 0.6 }}
                 className="grid grid-cols-1 max-w-sm sm:max-w-md md:max-w-lg mx-auto relative"
               >
-                <MemberCard
+                <MemoizedMemberCard
                   member={leadershipTeam[0]}
                   onClick={() => setSelectedLeader(leadershipTeam[0])}
                 />
@@ -711,7 +679,7 @@ export default function AboutUsPage() {
                 transition={{ delay: index * 0.05 }}
                 className="flex justify-center"
               >
-                <DirectorCard
+                <MemoizedDirectorCard
                   director={director}
                   onClick={() => setSelectedDirector(director)}
                 />
@@ -738,28 +706,19 @@ export default function AboutUsPage() {
         {selectedDirector && (
           <FlipCardPopup
             member={selectedDirector}
-            type="director"
             onClose={() => setSelectedDirector(null)}
-            isFlipped={popupFlipped[selectedDirector.name] || false}
-            onFlip={() => handlePopupFlip(selectedDirector.name)}
           />
         )}
         {selectedLeader && (
           <FlipCardPopup
             member={selectedLeader}
-            type="leader"
             onClose={() => setSelectedLeader(null)}
-            isFlipped={popupFlipped[selectedLeader.name] || false}
-            onFlip={() => handlePopupFlip(selectedLeader.name)}
           />
         )}
         {selectedPillar && (
           <FlipCardPopup
             member={selectedPillar}
-            type="pillar"
             onClose={() => setSelectedPillar(null)}
-            isFlipped={popupFlipped[selectedPillar.name] || false}
-            onFlip={() => handlePopupFlip(selectedPillar.name)}
           />
         )}
       </AnimatePresence>
@@ -769,38 +728,25 @@ export default function AboutUsPage() {
 
 function FlipCardPopup({
   member,
-  type,
   onClose,
-  isFlipped,
-  onFlip,
 }: {
   member: Director | Leader | Pillar;
-  type: "director" | "leader" | "pillar";
   onClose: () => void;
-  isFlipped: boolean;
-  onFlip: () => void;
 }) {
-  // Additional tech info for back side
-  const techExpertise = [
-    { area: "Frontend", level: 95, color: "from-orange-500 to-yellow-500" },
-    { area: "Backend", level: 90, color: "from-blue-500 to-cyan-500" },
-    { area: "Database", level: 85, color: "from-green-500 to-emerald-500" },
-    { area: "DevOps", level: 80, color: "from-purple-500 to-pink-500" },
-    { area: "System Design", level: 88, color: "from-red-500 to-orange-500" },
-    {
-      area: "Team Leadership",
-      level: 92,
-      color: "from-indigo-500 to-purple-500",
-    },
-  ];
-
-  // Handle escape key
+  // Handle escape key and body scroll lock
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
+
+    // Prevent body scroll when modal is open
+    document.body.style.overflow = "hidden";
     window.addEventListener("keydown", handleEscape);
-    return () => window.removeEventListener("keydown", handleEscape);
+
+    return () => {
+      document.body.style.overflow = "unset";
+      window.removeEventListener("keydown", handleEscape);
+    };
   }, [onClose]);
 
   return (
@@ -810,6 +756,7 @@ function FlipCardPopup({
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm"
       onClick={onClose}
+      style={{ overscrollBehavior: "contain" }}
     >
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
@@ -818,30 +765,34 @@ function FlipCardPopup({
         transition={{ type: "spring", damping: 25 }}
         className="relative w-full max-w-2xl"
         onClick={(e) => e.stopPropagation()}
-        style={{ perspective: "1000px" }}
+        style={{
+          perspective: "1000px",
+          maxHeight: "90vh",
+          overflowY: "auto",
+          overscrollBehavior: "contain",
+        }}
       >
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute -top-10 sm:-top-12 right-0 z-10 p-2 hover:bg-gray-800 rounded-lg transition-colors"
+          className="absolute top-4 right-4 z-20 p-2 rounded-full bg-black/60 hover:bg-black/80 border border-white/10 transition-colors"
+          aria-label="Close profile"
         >
-          <X className="w-5 h-5 text-gray-400 hover:text-white" />
+          <X className="w-5 h-5 text-white" />
         </button>
 
         {/* Flip Card Container */}
         <div
-          className={`relative transition-transform duration-700 [transform-style:preserve-3d] ${
-            isFlipped ? "[transform:rotateY(180deg)]" : ""
-          }`}
+          className="relative transition-transform duration-700 [transform-style:preserve-3d] w-full"
           style={{
-            height: "calc(min(90vh, 600px))",
-            maxHeight: "600px",
+            minHeight: "auto",
+            maxHeight: "none",
           }}
         >
           {/* FRONT SIDE */}
           <div
             className="absolute inset-0 bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-xl sm:rounded-2xl overflow-hidden flex flex-col [backface-visibility:hidden]"
-            style={{ WebkitBackfaceVisibility: "hidden" }}
+            style={{ WebkitBackfaceVisibility: "hidden", position: "relative" }}
           >
             {/* Header with Flip Button */}
             <div className="relative p-4 sm:p-6 md:p-8 border-b border-gray-800">
@@ -870,29 +821,15 @@ function FlipCardPopup({
                     </div>
                   </div>
                 </div>
-
-                {/* Flip Button */}
-                <motion.button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onFlip();
-                  }}
-                  whileHover={{ scale: 1.05, rotate: 180 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="p-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors flex-shrink-0 ml-2"
-                >
-                  <Layers className="w-5 h-5 text-orange-400" />
-                </motion.button>
               </div>
             </div>
 
             {/* Content - Improved scroll for mobile */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8">
+            <div className="flex-1 overflow-y-auto overscroll-contain p-4 sm:p-6 md:p-8">
               <div
                 className="space-y-4"
                 style={{
                   WebkitOverflowScrolling: "touch",
-                  overscrollBehavior: "contain",
                 }}
               >
                 {/* Additional Info */}
@@ -913,16 +850,6 @@ function FlipCardPopup({
                       </p>
                     </div>
                   )}
-                  <div className="bg-gray-800/50 rounded-lg p-3">
-                    <p className="text-xs text-gray-400">Role Type</p>
-                    <p className="text-white font-medium capitalize truncate">
-                      {type}
-                    </p>
-                  </div>
-                  <div className="bg-gray-800/50 rounded-lg p-3">
-                    <p className="text-xs text-gray-400">Status</p>
-                    <p className="text-orange-300 font-medium">Active</p>
-                  </div>
                 </div>
 
                 {/* Bio */}
@@ -972,131 +899,7 @@ function FlipCardPopup({
             </div>
           </div>
 
-          {/* BACK SIDE */}
-          <div
-            className="absolute inset-0 bg-gradient-to-br from-gray-900 to-black border border-orange-500/50 rounded-xl sm:rounded-2xl overflow-hidden flex flex-col [backface-visibility:hidden] [transform:rotateY(180deg)]"
-            style={{ WebkitBackfaceVisibility: "hidden" }}
-          >
-            {/* Header */}
-            <div className="p-4 sm:p-6 md:p-8 border-b border-orange-500/30">
-              <div className="flex items-center justify-between">
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-xl sm:text-2xl font-bold text-white truncate">
-                    Tech Profile
-                  </h3>
-                  <p className="text-orange-400 text-sm mt-1 truncate">
-                    Technical Expertise & Skills
-                  </p>
-                </div>
-
-                <motion.button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onFlip();
-                  }}
-                  whileHover={{ scale: 1.05, rotate: 180 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="p-2 bg-orange-500/20 hover:bg-orange-500/30 border border-orange-500/30 rounded-lg transition-colors flex-shrink-0 ml-2"
-                >
-                  <Layers className="w-5 h-5 text-orange-400" />
-                </motion.button>
-              </div>
-            </div>
-
-            {/* Tech Content - Improved scroll for mobile */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8">
-              <div
-                className="space-y-4"
-                style={{
-                  WebkitOverflowScrolling: "touch",
-                  overscrollBehavior: "contain",
-                }}
-              >
-                {/* Tech Stats */}
-                <div className="space-y-4">
-                  <h4 className="text-lg font-semibold text-orange-400">
-                    Technical Proficiencies
-                  </h4>
-                  {techExpertise.map((tech, index) => (
-                    <div key={index} className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-300 truncate">
-                          {tech.area}
-                        </span>
-                        <span className="text-sm font-semibold text-orange-400 flex-shrink-0 ml-2">
-                          {tech.level}%
-                        </span>
-                      </div>
-                      <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          animate={{ width: `${tech.level}%` }}
-                          transition={{ delay: index * 0.1, duration: 1 }}
-                          className={`h-full bg-gradient-to-r ${tech.color} rounded-full`}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Tech Badges */}
-                <div>
-                  <h4 className="text-lg font-semibold text-orange-400 mb-3">
-                    Technical Domains
-                  </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {techBadges.map((badge, index) => (
-                      <motion.div
-                        key={index}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: index * 0.05 }}
-                        whileHover={{ scale: 1.05 }}
-                        className="flex items-center gap-2 px-3 py-2 bg-gray-800/50 border border-gray-700 rounded-lg flex-shrink-0"
-                      >
-                        {badge.icon}
-                        <span className="text-xs font-medium text-gray-300 truncate">
-                          {badge.label}
-                        </span>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Additional Tech Info */}
-                <div className="bg-gray-800/30 rounded-lg p-4 border border-gray-700">
-                  <h4 className="text-lg font-semibold text-orange-400 mb-2">
-                    Tech Leadership Impact
-                  </h4>
-                  <ul className="space-y-2 text-gray-300 text-sm">
-                    <li className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0" />
-                      <span>Led multiple successful technical workshops</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0" />
-                      <span>Mentored 50+ students in coding practices</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0" />
-                      <span>Contributed to open-source projects</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0" />
-                      <span>Published technical blogs/articles</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            {/* Back Side Footer */}
-            <div className="p-4 sm:p-6 border-t border-orange-500/30">
-              <p className="text-center text-sm text-gray-400">
-                {/* Hover over the card or click the flip button to return to profile */}
-              </p>
-            </div>
-          </div>
+          {/* BACK SIDE - REMOVED */}
         </div>
       </motion.div>
     </motion.div>
@@ -1179,6 +982,9 @@ function MemberCard({
             src={member.img}
             alt={member.name}
             fill
+            priority={false}
+            quality={75}
+            loading="lazy"
             className={`object-cover transition-transform duration-500 ${
               isHovered ? "scale-110" : "scale-100"
             }`}
@@ -1203,7 +1009,7 @@ function MemberCard({
           </p>
 
           {/* Social Links */}
-          <div className="flex gap:2 mt-4 pt-4 border-t border-gray-800">
+          <div className="flex gap-2 mt-4 pt-4 border-t border-gray-800">
             {member.linkedin && member.linkedin !== "#" && (
               <motion.a
                 href={member.linkedin}
@@ -1236,6 +1042,8 @@ function MemberCard({
   );
 }
 
+const MemoizedMemberCard = memo(MemberCard);
+
 function DirectorCard({
   director,
   onClick,
@@ -1260,6 +1068,9 @@ function DirectorCard({
             src={director.img}
             alt={director.name}
             fill
+            priority={false}
+            quality={75}
+            loading="lazy"
             className={`object-cover transition-transform duration-500 ${
               isHovered ? "scale-110" : "scale-100"
             }`}
@@ -1326,6 +1137,8 @@ function DirectorCard({
     </motion.div>
   );
 }
+
+const MemoizedDirectorCard = memo(DirectorCard);
 
 /* NINJA PHILOSOPHY GRID COMPONENT */
 function NinjaPhilosophyGrid() {
@@ -1652,11 +1465,13 @@ const directors = [
     bio: "Kashak manages operational logistics as Logistics Director, coordinating resources and facilities to ensure smooth execution of all club events and activities.",
   },
   {
-    name: "Harshil",
+    name: "Harshit",
     role: "Marketing Director",
-    img: "/team/HARSHIL.jpeg",
-    linkedin: "#",
-    insta: "#",
-    bio: "Harshil develops marketing strategies as Marketing Director, creating campaigns that promote club initiatives and attract participation from the student community.",
+    img: "/team/HARSHIT.jpeg",
+    linkedin:
+      "https://www.linkedin.com/in/harshit-batra-0135b22b7?utm_source=share_via&utm_content=profile&utm_medium=member_ios",
+    insta:
+      "https://www.instagram.com/_harshit.batra28?igsh=MWtwc3lvbzgyZThwcQ%3D%3D&utm_source=qr",
+    bio: "Harshit develops marketing strategies as Marketing Director, creating campaigns that promote club initiatives and attract participation from the student community.",
   },
 ];

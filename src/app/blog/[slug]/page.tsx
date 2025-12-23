@@ -8,7 +8,7 @@ export const revalidate = 3600;
 export const runtime = "nodejs";
 
 type PageProps = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 };
 
 export const dynamicParams = false;
@@ -21,7 +21,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
-  const { slug } = params;
+  const { slug } = await params;
   const post = await getPostBySlug(slug).catch(() => null);
   if (!post) return {};
   return {
@@ -46,7 +46,7 @@ export async function generateMetadata({
 }
 
 const BlogPostPage = async ({ params }: PageProps) => {
-  const { slug } = params;
+  const { slug } = await params;
   const post = await getPostBySlug(slug).catch(() => null);
 
   if (!post) return notFound();

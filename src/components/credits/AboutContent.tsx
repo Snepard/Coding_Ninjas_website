@@ -1,11 +1,24 @@
 "use client";
 
-import InfiniteMenu from "./InfiniteMenu";
+import dynamic from "next/dynamic";
 import TrueFocus from "./TrueFocus";
 import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
 import { useState } from "react";
-import ContributorModal from "./ContributorModal";
+
+// Lazy load heavy components
+const InfiniteMenu = dynamic(() => import("./InfiniteMenu"), {
+  loading: () => (
+    <div className="min-h-[60vh] flex items-center justify-center">
+      <div className="animate-pulse text-white/60">Loading contributors...</div>
+    </div>
+  ),
+  ssr: false,
+});
+
+const ContributorModal = dynamic(() => import("./ContributorModal"), {
+  ssr: false,
+});
 
 type MenuItem = {
   id?: string;
@@ -133,12 +146,13 @@ export default function AboutContent() {
 
   return (
     <>
-      {/* Contributors header - made transparent so site background shows */}
-      <section
-        className={`relative py-12 flex items-center justify-center overflow-hidden`}
-      >
-        <div
-          className={`relative z-10 text-center ${isDark ? "text-white" : "text-black"}`}
+      {/* Contributors header */}
+      <section className="pt-12 pb-6 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className={isDark ? "text-white" : "text-black"}
         >
           <TrueFocus
             sentence="Contributors"
@@ -149,41 +163,27 @@ export default function AboutContent() {
             animationDuration={2}
             pauseBetweenAnimations={1}
           />
-          <nav
-            className={`mt-4 text-sm md:text-base ${isDark ? "text-white/80" : "text-black/80"}`}
-          ></nav>
-        </div>
+        </motion.div>
       </section>
 
-      {/* Optional spacer or small transition area - keep it transparent */}
-      <motion.section
-        className="relative py-4 px-8"
-        initial={{ opacity: 0, y: 20, scale: 0.995 }}
-        whileInView={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
-        viewport={{ once: true }}
-      >
-        {/* left intentionally empty - only a small transition space */}
-      </motion.section>
+      {/* Team section */}
+      <section className="px-8 pb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          viewport={{ once: true, margin: "-50px" }}
+          className="max-w-7xl mx-auto"
+        >
+          <p
+            className={`text-3xl text-center max-w-2xl mx-auto mb-16 ${isDark ? "text-white/80" : "text-black/80"}`}
+          >
+            Meet the talented individuals driving innovation at
+            <span className="italic text-[#f76c6c]"> Coding Ninjas</span>.
+          </p>
 
-      {/* Team section - transparent so global background is visible */}
-      <section className={`relative px-8 ${isDark ? "" : ""}`}>
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <p
-              className={`text-3xl max-w-2xl mx-auto ${isDark ? "text-white/80" : "text-black/80"}`}
-            >
-              Meet the talented individuals driving innovation at
-              <span className="italic text-[#f76c6c]"> Coding Ninjas</span>.
-            </p>
-          </div>
-
-          {/* reduced forced height so background remains visible */}
-          <div className="relative min-h-[60vh] w-full">
-            {/* pass onItemClick so clicking opens the modal */}
-            <InfiniteMenu items={teamMembers} onSelect={openContributor} />
-          </div>
-        </div>
+          <InfiniteMenu items={teamMembers} onSelect={openContributor} />
+        </motion.div>
       </section>
 
       {/* modal */}

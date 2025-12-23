@@ -21,8 +21,7 @@ export async function GET() {
     });
 
     // This log is for definitive verification in your terminal.
-    if (pendingForms.length > 0) {
-    }
+    // Verification: pendingForms.length = ${pendingForms.length}
 
     // Return the complete data.
     return NextResponse.json({ success: true, pendingForms, completedForms });
