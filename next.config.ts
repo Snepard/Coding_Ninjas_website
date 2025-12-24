@@ -19,6 +19,15 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["mongodb", "mongoose"],
   // Disable typed routes to avoid build complications
   // typedRoutes: true,
+  async redirects() {
+    return [
+      {
+        source: "/hiring/admin",
+        destination: "/admin",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

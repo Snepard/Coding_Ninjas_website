@@ -31,6 +31,15 @@ interface Career {
   role: string;
 }
 
+interface UpcomingEvent {
+  _id: string;
+  name: string;
+  description: string;
+  date: string;
+  location: string;
+  poster: string;
+}
+
 // --- Helper Components ---
 const DeleteConfirmationModal = ({
   isOpen,
@@ -47,25 +56,36 @@ const DeleteConfirmationModal = ({
 }) => {
   if (!isOpen) return null;
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-zinc-900 border border-zinc-700 rounded-2xl shadow-xl w-full max-w-md p-6 text-center">
-        <h3 className="text-xl font-bold text-white mb-4">Confirm Deletion</h3>
-        <p className="text-gray-400 mb-8">
-          Are you unequivocally certain you wish to permanently erase this{" "}
-          {itemType}? This action cannot be undone.
+    <div
+      className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      onClick={onClose}
+    >
+      <div
+        className="bg-zinc-900 border border-zinc-700 rounded-2xl shadow-2xl w-full max-w-md p-6 sm:p-8 text-center transform transition-all"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-red-500/10 flex items-center justify-center">
+          <TrashIcon />
+        </div>
+        <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
+          Confirm Deletion
+        </h3>
+        <p className="text-gray-400 text-sm sm:text-base mb-6 sm:mb-8">
+          Are you sure you want to permanently delete this {itemType}? This
+          action cannot be undone.
         </p>
-        <div className="flex justify-center gap-4">
+        <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
           <button
             onClick={onClose}
             disabled={loading}
-            className="px-6 py-2 rounded-lg bg-zinc-700 text-white font-semibold hover:bg-zinc-600 transition-colors duration-200 disabled:opacity-50 cursor-pointer"
+            className="px-6 py-2.5 rounded-lg bg-zinc-700 text-white font-semibold hover:bg-zinc-600 transition-colors duration-200 disabled:opacity-50 cursor-pointer order-2 sm:order-1"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
             disabled={loading}
-            className="px-6 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center cursor-pointer"
+            className="px-6 py-2.5 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center cursor-pointer order-1 sm:order-2"
           >
             {loading ? (
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -123,6 +143,7 @@ export default function AdminDashboard() {
     Application[]
   >([]);
   const [careers, setCareers] = useState<Career[]>([]);
+  const [upcomingEvents, setUpcomingEvents] = useState<UpcomingEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -135,9 +156,18 @@ export default function AdminDashboard() {
   const [newCareerTeam, setNewCareerTeam] = useState("");
   const [newCareerRole, setNewCareerRole] = useState("");
   const [isAddingCareer, setIsAddingCareer] = useState(false);
-  const [activeTab, setActiveTab] = useState<"applications" | "openings">(
-    "applications",
+  const [newEventName, setNewEventName] = useState("");
+  const [newEventDescription, setNewEventDescription] = useState("");
+  const [newEventDate, setNewEventDate] = useState("");
+  const [newEventLocation, setNewEventLocation] = useState("");
+  const [newEventPoster, setNewEventPoster] = useState("");
+  const [isAddingEvent, setIsAddingEvent] = useState(false);
+  const [newEventPosterFile, setNewEventPosterFile] = useState<File | null>(
+    null,
   );
+  const [activeTab, setActiveTab] = useState<
+    "applications" | "openings" | "upcomingEvents"
+  >("applications");
 
   const ITEMS_PER_PAGE = 10;
   const [visiblePendingCount, setVisiblePendingCount] =
@@ -173,7 +203,11 @@ export default function AdminDashboard() {
           return;
         }
 
-        await Promise.all([fetchApplications(), fetchCareers()]);
+        await Promise.all([
+          fetchApplications(),
+          fetchCareers(),
+          fetchUpcomingEvents(),
+        ]);
       } catch (err) {
         console.error("Auth check failed:", err);
         router.push("/hiring/signin");
@@ -298,6 +332,21 @@ export default function AdminDashboard() {
     }
   };
 
+  const fetchUpcomingEvents = async () => {
+    try {
+      const res = await fetch("/api/admin/upcoming-events", {
+        cache: "no-store",
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (data.success) {
+        setUpcomingEvents(data.events || []);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const handleAddCareer = async (e: FormEvent) => {
     e.preventDefault();
     if (!newCareerTitle || !newCareerTeam || !newCareerRole) return;
@@ -329,6 +378,77 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleAddEvent = async (e: FormEvent) => {
+    e.preventDefault();
+    if (
+      !newEventName ||
+      !newEventDescription ||
+      !newEventDate ||
+      !newEventLocation ||
+      (!newEventPoster && !newEventPosterFile)
+    )
+      return;
+    setIsAddingEvent(true);
+    try {
+      let posterUrl = newEventPoster;
+
+      if (newEventPosterFile) {
+        const formData = new FormData();
+        formData.append("file", newEventPosterFile);
+
+        const uploadRes = await fetch("/api/admin/upload-poster", {
+          method: "POST",
+          body: formData,
+        });
+        const uploadData = await uploadRes.json();
+
+        if (!uploadRes.ok || !uploadData.success || !uploadData.url) {
+          console.error("Poster upload failed:", uploadData.error);
+          alert("Failed to upload poster. Please try again.");
+          setIsAddingEvent(false);
+          return;
+        }
+
+        posterUrl = uploadData.url as string;
+      }
+
+      if (!posterUrl) {
+        alert("Poster URL is required.");
+        setIsAddingEvent(false);
+        return;
+      }
+
+      const res = await fetch("/api/admin/upcoming-events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          name: newEventName,
+          description: newEventDescription,
+          date: newEventDate,
+          location: newEventLocation,
+          poster: posterUrl,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNewEventName("");
+        setNewEventDescription("");
+        setNewEventDate("");
+        setNewEventLocation("");
+        setNewEventPoster("");
+        setNewEventPosterFile(null);
+        fetchUpcomingEvents();
+      } else {
+        console.error("Failed to add event:", data.error);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsAddingEvent(false);
+    }
+  };
+
   const toggleStatus = async (id: string) => {
     try {
       const res = await fetch(`/api/hiring/admin/toggleStatus/${id}`, {
@@ -355,7 +475,10 @@ export default function AdminDashboard() {
     }
   };
 
-  const openDeleteModal = (id: string, type: "application" | "career") => {
+  const openDeleteModal = (
+    id: string,
+    type: "application" | "career" | "event",
+  ) => {
     setItemToDelete({ id, type });
     setIsDeleteModalOpen(true);
   };
@@ -369,16 +492,27 @@ export default function AdminDashboard() {
     if (!itemToDelete) return;
     setIsDeleting(true);
     try {
-      const res = await fetch(
-        `/api/hiring/admin/${itemToDelete.type}s/${itemToDelete.id}`,
-        { method: "DELETE", credentials: "include" },
-      );
+      let url = "";
+      if (itemToDelete.type === "application") {
+        url = `/api/hiring/admin/applications/${itemToDelete.id}`;
+      } else if (itemToDelete.type === "career") {
+        url = `/api/hiring/admin/careers/${itemToDelete.id}`;
+      } else if (itemToDelete.type === "event") {
+        url = `/api/admin/upcoming-events/${itemToDelete.id}`;
+      }
+
+      const res = await fetch(url, {
+        method: "DELETE",
+        credentials: "include",
+      });
       const data = await res.json();
       if (data.success) {
         if (itemToDelete.type === "application") {
           fetchApplications();
-        } else {
+        } else if (itemToDelete.type === "career") {
           fetchCareers();
+        } else if (itemToDelete.type === "event") {
+          fetchUpcomingEvents();
         }
       } else {
         console.error(`Failed to delete ${itemToDelete.type}:`, data.error);
@@ -595,34 +729,45 @@ export default function AdminDashboard() {
         loading={isDeleting}
         itemType={itemToDelete?.type || ""}
       />
-      <div className="min-h-screen relative overflow-hidden text-white">
+      <div className="min-h-screen relative overflow-hidden text-white bg-zinc-950">
         <div
-          className={`relative z-10 p-6 md:p-8 lg:p-12 transition-all duration-1000 ${
+          className={`relative z-10 p-4 sm:p-6 md:p-8 lg:p-10 transition-all duration-1000 ${
             mounted ? "opacity-100" : "opacity-0"
           }`}
         >
-          <div className="text-center mb-8">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">
+          <div className="text-center mb-6 sm:mb-8">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2">
               Admin Dashboard
             </h1>
-            <div className="w-24 h-1 bg-gradient-to-r from-orange-500 to-orange-600 mx-auto mt-4"></div>
+            <div className="w-20 sm:w-24 h-1 bg-gradient-to-r from-orange-500 to-orange-600 mx-auto mt-3 sm:mt-4"></div>
+            <p className="text-gray-400 text-sm mt-3 sm:mt-4">
+              Manage applications, openings, and upcoming events
+            </p>
           </div>
 
-          <div className="mb-10 flex justify-center">
-            <div className="relative bg-zinc-900 p-1 rounded-full flex items-center border border-zinc-800">
+          <div className="mb-6 sm:mb-8 md:mb-10 flex justify-center overflow-x-auto pb-2">
+            <div className="relative bg-zinc-900 p-1 rounded-full flex items-center border border-zinc-800 min-w-fit">
               <span
                 className={`absolute top-1 bottom-1 bg-orange-500 rounded-full shadow-lg shadow-orange-500/20 transition-all duration-300 ease-in-out`}
                 style={{
-                  width: "calc(50% - 4px)",
+                  width:
+                    activeTab === "applications"
+                      ? "7rem"
+                      : activeTab === "openings"
+                        ? "7rem"
+                        : "8rem",
+                  left: "0.25rem",
                   transform:
                     activeTab === "applications"
-                      ? "translateX(4px)"
-                      : "translateX(calc(100% + 4px))",
+                      ? "translateX(0)"
+                      : activeTab === "openings"
+                        ? "translateX(7rem)"
+                        : "translateX(14rem)",
                 }}
               ></span>
               <button
                 onClick={() => setActiveTab("applications")}
-                className={`relative z-10 w-32 py-2 text-sm font-semibold transition-colors duration-300 rounded-full cursor-pointer ${
+                className={`relative z-10 w-28 py-2.5 text-xs sm:text-sm font-semibold transition-colors duration-300 rounded-full cursor-pointer whitespace-nowrap flex items-center justify-center ${
                   activeTab === "applications"
                     ? "text-black"
                     : "text-gray-400 hover:text-white"
@@ -632,13 +777,23 @@ export default function AdminDashboard() {
               </button>
               <button
                 onClick={() => setActiveTab("openings")}
-                className={`relative z-10 w-32 py-2 text-sm font-semibold transition-colors duration-300 rounded-full cursor-pointer ${
+                className={`relative z-10 w-28 py-2.5 text-xs sm:text-sm font-semibold transition-colors duration-300 rounded-full cursor-pointer whitespace-nowrap flex items-center justify-center ${
                   activeTab === "openings"
                     ? "text-black"
                     : "text-gray-400 hover:text-white"
                 }`}
               >
                 Openings
+              </button>
+              <button
+                onClick={() => setActiveTab("upcomingEvents")}
+                className={`relative z-10 w-32 py-2.5 text-xs sm:text-sm font-semibold transition-colors duration-300 rounded-full cursor-pointer whitespace-nowrap flex items-center justify-center ${
+                  activeTab === "upcomingEvents"
+                    ? "text-black"
+                    : "text-gray-400 hover:text-white"
+                }`}
+              >
+                Upcoming Events
               </button>
             </div>
           </div>
@@ -650,7 +805,9 @@ export default function AdminDashboard() {
                 transform:
                   activeTab === "applications"
                     ? "translateX(0%)"
-                    : "translateX(-100%)",
+                    : activeTab === "openings"
+                      ? "translateX(-100%)"
+                      : "translateX(-200%)",
               }}
             >
               <div className="w-full flex-shrink-0">
@@ -870,20 +1027,20 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              <div className="w-full flex-shrink-0 px-4 md:px-8 lg:px-12">
+              <div className="w-full flex-shrink-0 px-2 sm:px-4 md:px-6 lg:px-8">
                 <section>
-                  <h2 className="text-2xl md:text-3xl font-bold text-white mb-10 text-center">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-6 sm:mb-8 md:mb-10 text-center">
                     Manage Career Openings
                   </h2>
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 items-start">
                     <div className="lg:col-span-1">
-                      <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-6 sticky top-8">
-                        <h3 className="text-lg font-bold text-white mb-4">
+                      <div className="bg-zinc-950 border border-zinc-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:sticky lg:top-8">
+                        <h3 className="text-base sm:text-lg font-bold text-white mb-4">
                           Add New Opening
                         </h3>
                         <form
                           onSubmit={handleAddCareer}
-                          className="flex flex-col items-center gap-4"
+                          className="flex flex-col gap-3 sm:gap-4"
                         >
                           <input
                             type="text"
@@ -940,25 +1097,25 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                     <div className="lg:col-span-2">
-                      <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-6">
-                        <h3 className="text-lg font-bold text-white mb-4">
+                      <div className="bg-zinc-950 border border-zinc-800 rounded-xl sm:rounded-2xl p-4 sm:p-6">
+                        <h3 className="text-base sm:text-lg font-bold text-white mb-4">
                           Current Openings
                         </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto pr-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 max-h-[60vh] overflow-y-auto pr-1 sm:pr-2">
                           {careers.length > 0 ? (
                             careers.map((career) => (
                               <div
                                 key={career._id}
-                                className="flex items-center justify-between bg-zinc-900 p-4 rounded-lg"
+                                className="flex items-center justify-between bg-zinc-900 p-3 sm:p-4 rounded-lg border border-zinc-800 hover:border-zinc-700 transition-colors"
                               >
-                                <div className="flex-1">
-                                  <p className="font-bold text-white text-lg">
+                                <div className="flex-1 min-w-0">
+                                  <p className="font-bold text-white text-base sm:text-lg truncate">
                                     {career.title}
                                   </p>
-                                  <p className="text-sm text-gray-400 mt-1">
+                                  <p className="text-xs sm:text-sm text-gray-400 mt-1">
                                     Team: {career.team}
                                   </p>
-                                  <p className="text-sm text-gray-400">
+                                  <p className="text-xs sm:text-sm text-gray-400">
                                     Role: {career.role}
                                   </p>
                                 </div>
@@ -966,7 +1123,7 @@ export default function AdminDashboard() {
                                   onClick={() =>
                                     openDeleteModal(career._id, "career")
                                   }
-                                  className="p-2 rounded-lg text-red-500 hover:bg-red-500/10 transition-colors duration-200 cursor-pointer"
+                                  className="p-2 rounded-lg text-red-500 hover:bg-red-500/10 transition-colors duration-200 cursor-pointer flex-shrink-0"
                                 >
                                   <TrashIcon />
                                 </button>
@@ -975,6 +1132,147 @@ export default function AdminDashboard() {
                           ) : (
                             <p className="text-center text-gray-500 py-4 col-span-full">
                               No career openings found.
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div className="w-full flex-shrink-0 px-2 sm:px-4 md:px-6 lg:px-8">
+                <section>
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-6 sm:mb-8 md:mb-10 text-center">
+                    Upcoming Events
+                  </h2>
+                  <div className="bg-zinc-950 border border-zinc-800 rounded-xl sm:rounded-2xl p-4 sm:p-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 items-start">
+                      <div className="lg:col-span-1">
+                        <div className="bg-zinc-900 rounded-xl sm:rounded-2xl p-4 border border-zinc-800">
+                          <h3 className="text-sm sm:text-base font-semibold mb-3">
+                            Add Upcoming Event
+                          </h3>
+                          <form
+                            onSubmit={handleAddEvent}
+                            className="flex flex-col gap-3"
+                          >
+                            <input
+                              type="text"
+                              value={newEventName}
+                              onChange={(e) => setNewEventName(e.target.value)}
+                              placeholder="Event name"
+                              className="w-full p-3 rounded-xl bg-black border border-zinc-700 focus:border-orange-500 focus:outline-none text-white placeholder-gray-600 transition-all duration-300"
+                              required
+                            />
+                            <textarea
+                              value={newEventDescription}
+                              onChange={(e) =>
+                                setNewEventDescription(e.target.value)
+                              }
+                              placeholder="Event description"
+                              className="w-full p-3 rounded-xl bg-black border border-zinc-700 focus:border-orange-500 focus:outline-none text-white placeholder-gray-600 transition-all duration-300 min-h-[80px]"
+                              required
+                            />
+                            <input
+                              type="date"
+                              value={newEventDate}
+                              onChange={(e) => setNewEventDate(e.target.value)}
+                              className="w-full p-3 rounded-xl bg-black border border-zinc-700 focus:border-orange-500 focus:outline-none text-white transition-all duration-300"
+                              required
+                            />
+                            <input
+                              type="text"
+                              value={newEventLocation}
+                              onChange={(e) =>
+                                setNewEventLocation(e.target.value)
+                              }
+                              placeholder="Location"
+                              className="w-full p-3 rounded-xl bg-black border border-zinc-700 focus:border-orange-500 focus:outline-none text-white placeholder-gray-600 transition-all duration-300"
+                              required
+                            />
+                            <div className="flex flex-col gap-2">
+                              <label className="text-xs text-gray-400">
+                                Poster (upload image or paste URL)
+                              </label>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0] || null;
+                                  setNewEventPosterFile(file);
+                                }}
+                                className="w-full text-xs text-gray-300 file:mr-2 sm:file:mr-3 file:rounded-lg file:border-0 file:bg-orange-500 file:px-2 file:py-1.5 sm:file:px-3 sm:file:py-2 file:text-xs file:font-semibold file:text-black hover:file:bg-orange-600 cursor-pointer"
+                              />
+                              <div className="relative">
+                                <span className="text-xs text-gray-500 absolute left-3 -top-2 bg-zinc-900 px-1">
+                                  OR
+                                </span>
+                              </div>
+                              <input
+                                type="text"
+                                value={newEventPoster}
+                                onChange={(e) =>
+                                  setNewEventPoster(e.target.value)
+                                }
+                                placeholder="Enter poster image URL"
+                                className="w-full p-3 rounded-xl bg-black border border-zinc-700 focus:border-orange-500 focus:outline-none text-white placeholder-gray-600 transition-all duration-300 text-sm"
+                              />
+                            </div>
+                            <button
+                              type="submit"
+                              disabled={isAddingEvent}
+                              className="w-full flex-shrink-0 py-3 px-6 bg-orange-500 text-black font-bold rounded-xl hover:bg-orange-600 transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+                            >
+                              <PlusIcon />
+                              {isAddingEvent ? "Adding..." : "Add Event"}
+                            </button>
+                          </form>
+                        </div>
+                      </div>
+                      <div className="lg:col-span-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 max-h-[60vh] overflow-y-auto pr-1 sm:pr-2">
+                          {upcomingEvents.length > 0 ? (
+                            upcomingEvents.map((event) => (
+                              <div
+                                key={event._id}
+                                className="flex flex-col bg-zinc-900 p-3 sm:p-4 rounded-lg gap-3 border border-zinc-800 hover:border-zinc-700 transition-colors"
+                              >
+                                <div className="flex justify-between items-start gap-2 sm:gap-3">
+                                  <div className="flex-1 min-w-0">
+                                    <p className="font-bold text-white text-base sm:text-lg truncate">
+                                      {event.name}
+                                    </p>
+                                    <p className="text-xs text-gray-400 mt-1">
+                                      {new Date(event.date).toLocaleDateString(
+                                        "en-IN",
+                                        {
+                                          year: "numeric",
+                                          month: "short",
+                                          day: "numeric",
+                                        },
+                                      )}
+                                    </p>
+                                    <p className="text-xs text-gray-400 mt-1 truncate">
+                                      {event.location}
+                                    </p>
+                                  </div>
+                                  <button
+                                    onClick={() =>
+                                      openDeleteModal(event._id, "event")
+                                    }
+                                    className="p-2 rounded-lg text-red-500 hover:bg-red-500/10 transition-colors duration-200 cursor-pointer flex-shrink-0"
+                                  >
+                                    <TrashIcon />
+                                  </button>
+                                </div>
+                                <p className="text-xs sm:text-sm text-gray-300 line-clamp-3">
+                                  {event.description}
+                                </p>
+                              </div>
+                            ))
+                          ) : (
+                            <p className="text-center text-gray-500 py-4 col-span-full">
+                              No upcoming events found.
                             </p>
                           )}
                         </div>

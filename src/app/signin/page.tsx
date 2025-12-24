@@ -71,9 +71,9 @@ export default function SigninPage() {
         console.warn("Could not fetch user after signin", e);
       }
 
-      // Redirect based on endpoint (client routes under /hiring)
+      // Redirect based on endpoint (admin now under /admin)
       if (endpoint === "/api/hiring/admin-signin") {
-        router.push("/hiring/admin");
+        router.push("/admin");
       } else {
         // regular users go to the hiring page
         router.push("/hiring");

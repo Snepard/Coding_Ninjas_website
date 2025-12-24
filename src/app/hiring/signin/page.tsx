@@ -155,9 +155,9 @@ export default function SigninPage() {
 
       // Wait a moment then redirect
       setTimeout(() => {
-        // Redirect based on endpoint (client routes under /hiring)
+        // Redirect based on endpoint (admin now under /admin)
         if (endpoint === "/api/hiring/admin-signin") {
-          router.push("/hiring/admin");
+          router.push("/admin");
         } else {
           // Regular user: go to careers page so they can select a role first
           router.push("/hiring");
