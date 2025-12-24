@@ -57,17 +57,17 @@ const DeleteConfirmationModal = ({
   if (!isOpen) return null;
   return (
     <div
-      className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-in fade-in duration-200"
       onClick={onClose}
     >
       <div
-        className="bg-zinc-900 border border-zinc-700 rounded-2xl shadow-2xl w-full max-w-md p-6 sm:p-8 text-center transform transition-all"
+        className="bg-gradient-to-br from-zinc-900 to-zinc-950 border border-zinc-700 rounded-2xl shadow-2xl shadow-orange-500/10 w-full max-w-md p-6 sm:p-8 text-center transform transition-all animate-in zoom-in-95 duration-300"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-red-500/10 flex items-center justify-center">
+        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-red-500/20 to-red-600/20 flex items-center justify-center ring-2 ring-red-500/30">
           <TrashIcon />
         </div>
-        <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
+        <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
           Confirm Deletion
         </h3>
         <p className="text-gray-400 text-sm sm:text-base mb-6 sm:mb-8">
@@ -78,14 +78,14 @@ const DeleteConfirmationModal = ({
           <button
             onClick={onClose}
             disabled={loading}
-            className="px-6 py-2.5 rounded-lg bg-zinc-700 text-white font-semibold hover:bg-zinc-600 transition-colors duration-200 disabled:opacity-50 cursor-pointer order-2 sm:order-1"
+            className="px-6 py-2.5 rounded-lg bg-zinc-700 text-white font-semibold hover:bg-zinc-600 hover:scale-105 transition-all duration-200 disabled:opacity-50 cursor-pointer order-2 sm:order-1 active:scale-95"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
             disabled={loading}
-            className="px-6 py-2.5 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center cursor-pointer order-1 sm:order-2"
+            className="px-6 py-2.5 rounded-lg bg-gradient-to-r from-red-600 to-red-700 text-white font-semibold hover:from-red-700 hover:to-red-800 hover:scale-105 hover:shadow-lg hover:shadow-red-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center cursor-pointer order-1 sm:order-2 active:scale-95"
           >
             {loading ? (
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -553,9 +553,9 @@ export default function AdminDashboard() {
 
   const renderTable = (applications: Application[], isPending: boolean) => {
     return (
-      <div className="overflow-x-auto bg-zinc-950 border border-zinc-800 rounded-2xl">
+      <div className="overflow-x-auto bg-gradient-to-br from-zinc-950 to-black border border-zinc-800 rounded-2xl hover:border-orange-500/30 transition-all duration-300 shadow-xl shadow-black/50">
         <table className="w-full text-left">
-          <thead className="bg-zinc-900 border-b border-zinc-800">
+          <thead className="bg-gradient-to-r from-zinc-900 to-zinc-950 border-b border-zinc-800">
             <tr>
               <th className="px-4 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
                 S.No
@@ -617,7 +617,7 @@ export default function AdminDashboard() {
               return (
                 <tr
                   key={app._id}
-                  className="hover:bg-zinc-900/50 transition-colors duration-200"
+                  className="hover:bg-gradient-to-r hover:from-zinc-900/50 hover:to-zinc-950 transition-all duration-300 border-b border-zinc-900 last:border-0 group"
                 >
                   <td className="px-4 py-4 text-sm text-white font-medium">
                     {index + 1}
@@ -664,7 +664,7 @@ export default function AdminDashboard() {
                         onClick={() =>
                           handleResumeDownload(app.resumeUrl!, resumeFilename)
                         }
-                        className="text-orange-500 hover:underline bg-transparent border-none p-0 cursor-pointer"
+                        className="text-orange-500 hover:text-orange-400 hover:underline bg-transparent border-none p-0 cursor-pointer transition-all duration-200 font-semibold"
                       >
                         Download
                       </button>
@@ -683,17 +683,17 @@ export default function AdminDashboard() {
                     <div className="flex items-center justify-center gap-2">
                       <button
                         onClick={() => toggleStatus(app._id)}
-                        className={`py-2 px-4 rounded-lg font-semibold text-black text-xs transition-all duration-300 hover:scale-[1.05] shadow-md cursor-pointer ${
+                        className={`py-2 px-4 rounded-lg font-semibold text-black text-xs transition-all duration-300 hover:scale-110 hover:shadow-lg shadow-md cursor-pointer active:scale-95 ${
                           isPending
-                            ? "bg-orange-500 hover:bg-orange-600"
-                            : "bg-yellow-500 hover:bg-yellow-600"
+                            ? "bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 hover:shadow-orange-500/50"
+                            : "bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 hover:shadow-yellow-500/50"
                         }`}
                       >
                         {isPending ? "Approve" : "To Pending"}
                       </button>
                       <button
                         onClick={() => openDeleteModal(app._id, "application")}
-                        className="p-2 rounded-lg bg-red-600/20 text-red-500 hover:bg-red-600/30 hover:text-red-400 transition-all duration-200 cursor-pointer"
+                        className="p-2 rounded-lg bg-red-600/20 text-red-500 hover:bg-red-600/40 hover:text-red-400 hover:scale-110 transition-all duration-200 cursor-pointer active:scale-95"
                         aria-label="Delete application"
                       >
                         <TrashIcon />
@@ -711,10 +711,16 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-white">
+      <div className="min-h-screen flex items-center justify-center text-white bg-zinc-950">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading Dashboard...</p>
+          <div className="relative w-20 h-20 mx-auto mb-6">
+            <div className="absolute inset-0 border-4 border-orange-500/20 rounded-full"></div>
+            <div className="absolute inset-0 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+            <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-orange-500/20 to-transparent blur-xl animate-pulse"></div>
+          </div>
+          <p className="text-gray-400 font-semibold tracking-wide">
+            Loading Dashboard...
+          </p>
         </div>
       </div>
     );
@@ -729,26 +735,29 @@ export default function AdminDashboard() {
         loading={isDeleting}
         itemType={itemToDelete?.type || ""}
       />
-      <div className="min-h-screen relative overflow-hidden text-white bg-zinc-950">
+      <div className="min-h-screen relative overflow-hidden text-white bg-transparent">
         <div
           className={`relative z-10 p-4 sm:p-6 md:p-8 lg:p-10 transition-all duration-1000 ${
             mounted ? "opacity-100" : "opacity-0"
           }`}
         >
           <div className="text-center mb-6 sm:mb-8">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-white via-orange-100 to-white bg-clip-text text-transparent mb-2 animate-in fade-in slide-in-from-top duration-700">
               Admin Dashboard
             </h1>
-            <div className="w-20 sm:w-24 h-1 bg-gradient-to-r from-orange-500 to-orange-600 mx-auto mt-3 sm:mt-4"></div>
-            <p className="text-gray-400 text-sm mt-3 sm:mt-4">
+            <div className="relative w-20 sm:w-24 h-1 mx-auto mt-3 sm:mt-4 overflow-hidden rounded-full">
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-orange-600"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-shimmer"></div>
+            </div>
+            <p className="text-gray-400 text-sm mt-3 sm:mt-4 animate-in fade-in slide-in-from-bottom duration-700">
               Manage applications, openings, and upcoming events
             </p>
           </div>
 
           <div className="mb-6 sm:mb-8 md:mb-10 flex justify-center overflow-x-auto pb-2">
-            <div className="relative bg-zinc-900 p-1 rounded-full flex items-center border border-zinc-800 min-w-fit">
+            <div className="relative bg-gradient-to-br from-zinc-900 to-zinc-950 p-1 rounded-full flex items-center border border-zinc-800 hover:border-orange-500/30 transition-all duration-300 min-w-fit shadow-lg shadow-black/50">
               <span
-                className={`absolute top-1 bottom-1 bg-orange-500 rounded-full shadow-lg shadow-orange-500/20 transition-all duration-300 ease-in-out`}
+                className={`absolute top-1 bottom-1 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full shadow-lg shadow-orange-500/50 transition-all duration-500 ease-out`}
                 style={{
                   width:
                     activeTab === "applications"
@@ -767,30 +776,30 @@ export default function AdminDashboard() {
               ></span>
               <button
                 onClick={() => setActiveTab("applications")}
-                className={`relative z-10 w-28 py-2.5 text-xs sm:text-sm font-semibold transition-colors duration-300 rounded-full cursor-pointer whitespace-nowrap flex items-center justify-center ${
+                className={`relative z-10 w-28 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-300 rounded-full cursor-pointer whitespace-nowrap flex items-center justify-center ${
                   activeTab === "applications"
-                    ? "text-black"
-                    : "text-gray-400 hover:text-white"
+                    ? "text-black scale-105"
+                    : "text-gray-400 hover:text-white hover:scale-105"
                 }`}
               >
                 Applications
               </button>
               <button
                 onClick={() => setActiveTab("openings")}
-                className={`relative z-10 w-28 py-2.5 text-xs sm:text-sm font-semibold transition-colors duration-300 rounded-full cursor-pointer whitespace-nowrap flex items-center justify-center ${
+                className={`relative z-10 w-28 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-300 rounded-full cursor-pointer whitespace-nowrap flex items-center justify-center ${
                   activeTab === "openings"
-                    ? "text-black"
-                    : "text-gray-400 hover:text-white"
+                    ? "text-black scale-105"
+                    : "text-gray-400 hover:text-white hover:scale-105"
                 }`}
               >
                 Openings
               </button>
               <button
                 onClick={() => setActiveTab("upcomingEvents")}
-                className={`relative z-10 w-32 py-2.5 text-xs sm:text-sm font-semibold transition-colors duration-300 rounded-full cursor-pointer whitespace-nowrap flex items-center justify-center ${
+                className={`relative z-10 w-32 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-300 rounded-full cursor-pointer whitespace-nowrap flex items-center justify-center ${
                   activeTab === "upcomingEvents"
-                    ? "text-black"
-                    : "text-gray-400 hover:text-white"
+                    ? "text-black scale-105"
+                    : "text-gray-400 hover:text-white hover:scale-105"
                 }`}
               >
                 Upcoming Events
@@ -815,10 +824,10 @@ export default function AdminDashboard() {
                   <section>
                     <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
                       <div className="flex items-center gap-3">
-                        <h2 className="text-2xl md:text-3xl font-bold text-white">
+                        <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
                           Pending Applications
                         </h2>
-                        <span className="px-3 py-1 bg-orange-500/20 border border-orange-500/50 rounded-full text-orange-500 text-sm font-semibold">
+                        <span className="px-3 py-1 bg-gradient-to-r from-orange-500/20 to-orange-600/20 border border-orange-500/50 rounded-full text-orange-500 text-sm font-semibold shadow-lg shadow-orange-500/20 hover:scale-110 transition-transform duration-300">
                           {filteredPendingApps.length}
                         </span>
                       </div>
@@ -831,7 +840,7 @@ export default function AdminDashboard() {
                               title: e.target.value,
                             }))
                           }
-                          className="bg-zinc-800 border-zinc-700 border text-white text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full p-2.5"
+                          className="bg-zinc-800 border-zinc-700 border text-white text-sm rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 hover:border-orange-500/50 block w-full p-2.5 transition-all duration-300 cursor-pointer"
                         >
                           <option value="">All Openings</option>
                           {pendingTitles.map((title) => (
@@ -848,7 +857,7 @@ export default function AdminDashboard() {
                               team: e.target.value,
                             }))
                           }
-                          className="bg-zinc-800 border-zinc-700 border text-white text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full p-2.5"
+                          className="bg-zinc-800 border-zinc-700 border text-white text-sm rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 hover:border-orange-500/50 block w-full p-2.5 transition-all duration-300 cursor-pointer"
                         >
                           <option value="">All Teams</option>
                           {pendingTeams.map((team) => (
@@ -865,7 +874,7 @@ export default function AdminDashboard() {
                               role: e.target.value,
                             }))
                           }
-                          className="bg-zinc-800 border-zinc-700 border text-white text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full p-2.5"
+                          className="bg-zinc-800 border-zinc-700 border text-white text-sm rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 hover:border-orange-500/50 block w-full p-2.5 transition-all duration-300 cursor-pointer"
                         >
                           <option value="">All Roles</option>
                           {pendingRoles.map((role) => (
@@ -877,7 +886,7 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                     {filteredPendingApps.length === 0 ? (
-                      <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-8 text-center">
+                      <div className="bg-gradient-to-br from-zinc-950 to-zinc-900 border border-zinc-800 rounded-2xl p-8 text-center hover:border-orange-500/30 transition-all duration-300">
                         <p className="text-gray-400">
                           No matching pending applications found.
                         </p>
@@ -895,7 +904,7 @@ export default function AdminDashboard() {
                                 onClick={() =>
                                   setVisiblePendingCount(ITEMS_PER_PAGE)
                                 }
-                                className="px-6 py-2 rounded-lg bg-zinc-800 text-white font-semibold hover:bg-zinc-700 transition-colors duration-200 cursor-pointer"
+                                className="px-6 py-2 rounded-lg bg-gradient-to-r from-zinc-800 to-zinc-900 text-white font-semibold hover:from-zinc-700 hover:to-zinc-800 hover:scale-105 hover:shadow-lg hover:shadow-orange-500/10 transition-all duration-200 cursor-pointer active:scale-95"
                               >
                                 View Less
                               </button>
@@ -908,7 +917,7 @@ export default function AdminDashboard() {
                                     (prev) => prev + ITEMS_PER_PAGE,
                                   )
                                 }
-                                className="px-6 py-2 rounded-lg bg-zinc-800 text-white font-semibold hover:bg-zinc-700 transition-colors duration-200 cursor-pointer"
+                                className="px-6 py-2 rounded-lg bg-gradient-to-r from-zinc-800 to-zinc-900 text-white font-semibold hover:from-zinc-700 hover:to-zinc-800 hover:scale-105 hover:shadow-lg hover:shadow-orange-500/10 transition-all duration-200 cursor-pointer active:scale-95"
                               >
                                 View More
                               </button>
@@ -921,10 +930,10 @@ export default function AdminDashboard() {
                   <section>
                     <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
                       <div className="flex items-center gap-3">
-                        <h2 className="text-2xl md:text-3xl font-bold text-white">
+                        <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
                           Completed Applications
                         </h2>
-                        <span className="px-3 py-1 bg-green-500/20 border border-green-500/50 rounded-full text-green-500 text-sm font-semibold">
+                        <span className="px-3 py-1 bg-gradient-to-r from-green-500/20 to-green-600/20 border border-green-500/50 rounded-full text-green-500 text-sm font-semibold shadow-lg shadow-green-500/20 hover:scale-110 transition-transform duration-300">
                           {filteredCompletedApps.length}
                         </span>
                       </div>
@@ -937,7 +946,7 @@ export default function AdminDashboard() {
                               title: e.target.value,
                             }))
                           }
-                          className="bg-zinc-800 border-zinc-700 border text-white text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full p-2.5"
+                          className="bg-zinc-800 border-zinc-700 border text-white text-sm rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 hover:border-orange-500/50 block w-full p-2.5 transition-all duration-300 cursor-pointer"
                         >
                           <option value="">All Openings</option>
                           {completedTitles.map((title) => (
@@ -954,7 +963,7 @@ export default function AdminDashboard() {
                               team: e.target.value,
                             }))
                           }
-                          className="bg-zinc-800 border-zinc-700 border text-white text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full p-2.5"
+                          className="bg-zinc-800 border-zinc-700 border text-white text-sm rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 hover:border-orange-500/50 block w-full p-2.5 transition-all duration-300 cursor-pointer"
                         >
                           <option value="">All Teams</option>
                           {completedTeams.map((team) => (
@@ -971,7 +980,7 @@ export default function AdminDashboard() {
                               role: e.target.value,
                             }))
                           }
-                          className="bg-zinc-800 border-zinc-700 border text-white text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full p-2.5"
+                          className="bg-zinc-800 border-zinc-700 border text-white text-sm rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 hover:border-orange-500/50 block w-full p-2.5 transition-all duration-300 cursor-pointer"
                         >
                           <option value="">All Roles</option>
                           {completedRoles.map((role) => (
@@ -983,7 +992,7 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                     {filteredCompletedApps.length === 0 ? (
-                      <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-8 text-center">
+                      <div className="bg-gradient-to-br from-zinc-950 to-zinc-900 border border-zinc-800 rounded-2xl p-8 text-center hover:border-orange-500/30 transition-all duration-300">
                         <p className="text-gray-400">
                           No matching completed applications found.
                         </p>
@@ -1001,7 +1010,7 @@ export default function AdminDashboard() {
                                 onClick={() =>
                                   setVisibleCompletedCount(ITEMS_PER_PAGE)
                                 }
-                                className="px-6 py-2 rounded-lg bg-zinc-800 text-white font-semibold hover:bg-zinc-700 transition-colors duration-200 cursor-pointer"
+                                className="px-6 py-2 rounded-lg bg-gradient-to-r from-zinc-800 to-zinc-900 text-white font-semibold hover:from-zinc-700 hover:to-zinc-800 hover:scale-105 hover:shadow-lg hover:shadow-orange-500/10 transition-all duration-200 cursor-pointer active:scale-95"
                               >
                                 View Less
                               </button>
@@ -1014,7 +1023,7 @@ export default function AdminDashboard() {
                                     (prev) => prev + ITEMS_PER_PAGE,
                                   )
                                 }
-                                className="px-6 py-2 rounded-lg bg-zinc-800 text-white font-semibold hover:bg-zinc-700 transition-colors duration-200 cursor-pointer"
+                                className="px-6 py-2 rounded-lg bg-gradient-to-r from-zinc-800 to-zinc-900 text-white font-semibold hover:from-zinc-700 hover:to-zinc-800 hover:scale-105 hover:shadow-lg hover:shadow-orange-500/10 transition-all duration-200 cursor-pointer active:scale-95"
                               >
                                 View More
                               </button>
@@ -1029,13 +1038,13 @@ export default function AdminDashboard() {
 
               <div className="w-full flex-shrink-0 px-2 sm:px-4 md:px-6 lg:px-8">
                 <section>
-                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-6 sm:mb-8 md:mb-10 text-center">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-white via-orange-100 to-white bg-clip-text text-transparent mb-6 sm:mb-8 md:mb-10 text-center animate-in fade-in duration-700">
                     Manage Career Openings
                   </h2>
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 items-start">
                     <div className="lg:col-span-1">
-                      <div className="bg-zinc-950 border border-zinc-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:sticky lg:top-8">
-                        <h3 className="text-base sm:text-lg font-bold text-white mb-4">
+                      <div className="bg-gradient-to-br from-zinc-950 to-zinc-900 border border-zinc-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:sticky lg:top-8 hover:border-orange-500/30 transition-all duration-300 shadow-lg shadow-black/50">
+                        <h3 className="text-base sm:text-lg font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-4">
                           Add New Opening
                         </h3>
                         <form
@@ -1047,13 +1056,13 @@ export default function AdminDashboard() {
                             value={newCareerTitle}
                             onChange={(e) => setNewCareerTitle(e.target.value)}
                             placeholder="Enter Title"
-                            className="w-full p-3 rounded-xl bg-black border border-zinc-700 focus:border-orange-500 focus:outline-none text-white placeholder-gray-600 transition-all duration-300"
+                            className="w-full p-3 rounded-xl bg-black border border-zinc-700 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/30 focus:outline-none text-white placeholder-gray-600 transition-all duration-300 hover:border-orange-500/50"
                             required
                           />
                           <select
                             value={newCareerTeam}
                             onChange={(e) => setNewCareerTeam(e.target.value)}
-                            className="w-full p-3 rounded-xl bg-black border border-zinc-700 focus:border-orange-500 focus:outline-none text-white transition-all duration-300"
+                            className="w-full p-3 rounded-xl bg-black border border-zinc-700 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/30 focus:outline-none text-white transition-all duration-300 hover:border-orange-500/50 cursor-pointer"
                             required
                           >
                             <option value="">Select Team</option>
@@ -1076,7 +1085,7 @@ export default function AdminDashboard() {
                           <select
                             value={newCareerRole}
                             onChange={(e) => setNewCareerRole(e.target.value)}
-                            className="w-full p-3 rounded-xl bg-black border border-zinc-700 focus:border-orange-500 focus:outline-none text-white transition-all duration-300"
+                            className="w-full p-3 rounded-xl bg-black border border-zinc-700 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/30 focus:outline-none text-white transition-all duration-300 hover:border-orange-500/50 cursor-pointer"
                             required
                           >
                             <option value="">Select Role</option>
@@ -1089,7 +1098,7 @@ export default function AdminDashboard() {
                           <button
                             type="submit"
                             disabled={isAddingCareer}
-                            className="w-full flex-shrink-0 py-3 px-6 bg-orange-500 text-black font-bold rounded-xl hover:bg-orange-600 transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+                            className="w-full flex-shrink-0 py-3 px-6 bg-gradient-to-r from-orange-500 to-orange-600 text-black font-bold rounded-xl hover:from-orange-600 hover:to-orange-700 hover:scale-105 hover:shadow-lg hover:shadow-orange-500/50 transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer active:scale-95"
                           >
                             <PlusIcon /> Add Opening
                           </button>
@@ -1097,8 +1106,8 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                     <div className="lg:col-span-2">
-                      <div className="bg-zinc-950 border border-zinc-800 rounded-xl sm:rounded-2xl p-4 sm:p-6">
-                        <h3 className="text-base sm:text-lg font-bold text-white mb-4">
+                      <div className="bg-gradient-to-br from-zinc-950 to-zinc-900 border border-zinc-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:border-orange-500/30 transition-all duration-300 shadow-lg shadow-black/50">
+                        <h3 className="text-base sm:text-lg font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-4">
                           Current Openings
                         </h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 max-h-[60vh] overflow-y-auto pr-1 sm:pr-2">
@@ -1106,10 +1115,10 @@ export default function AdminDashboard() {
                             careers.map((career) => (
                               <div
                                 key={career._id}
-                                className="flex items-center justify-between bg-zinc-900 p-3 sm:p-4 rounded-lg border border-zinc-800 hover:border-zinc-700 transition-colors"
+                                className="flex items-center justify-between bg-gradient-to-br from-zinc-900 to-zinc-950 p-3 sm:p-4 rounded-lg border border-zinc-800 hover:border-orange-500/50 hover:scale-105 hover:shadow-lg hover:shadow-orange-500/20 transition-all duration-300 group"
                               >
                                 <div className="flex-1 min-w-0">
-                                  <p className="font-bold text-white text-base sm:text-lg truncate">
+                                  <p className="font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent text-base sm:text-lg truncate group-hover:from-orange-200 group-hover:to-white transition-all duration-300">
                                     {career.title}
                                   </p>
                                   <p className="text-xs sm:text-sm text-gray-400 mt-1">
@@ -1123,7 +1132,7 @@ export default function AdminDashboard() {
                                   onClick={() =>
                                     openDeleteModal(career._id, "career")
                                   }
-                                  className="p-2 rounded-lg text-red-500 hover:bg-red-500/10 transition-colors duration-200 cursor-pointer flex-shrink-0"
+                                  className="p-2 rounded-lg text-red-500 hover:bg-red-500/20 hover:scale-110 transition-all duration-200 cursor-pointer flex-shrink-0 active:scale-95"
                                 >
                                   <TrashIcon />
                                 </button>
@@ -1142,14 +1151,14 @@ export default function AdminDashboard() {
               </div>
               <div className="w-full flex-shrink-0 px-2 sm:px-4 md:px-6 lg:px-8">
                 <section>
-                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-6 sm:mb-8 md:mb-10 text-center">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-white via-orange-100 to-white bg-clip-text text-transparent mb-6 sm:mb-8 md:mb-10 text-center animate-in fade-in duration-700">
                     Upcoming Events
                   </h2>
-                  <div className="bg-zinc-950 border border-zinc-800 rounded-xl sm:rounded-2xl p-4 sm:p-6">
+                  <div className="bg-gradient-to-br from-zinc-950 to-zinc-900 border border-zinc-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:border-orange-500/30 transition-all duration-300 shadow-lg shadow-black/50">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 items-start">
                       <div className="lg:col-span-1">
-                        <div className="bg-zinc-900 rounded-xl sm:rounded-2xl p-4 border border-zinc-800">
-                          <h3 className="text-sm sm:text-base font-semibold mb-3">
+                        <div className="bg-gradient-to-br from-zinc-900 to-zinc-950 rounded-xl sm:rounded-2xl p-4 border border-zinc-800 hover:border-orange-500/30 transition-all duration-300 shadow-lg">
+                          <h3 className="text-sm sm:text-base font-semibold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-3">
                             Add Upcoming Event
                           </h3>
                           <form
@@ -1161,7 +1170,7 @@ export default function AdminDashboard() {
                               value={newEventName}
                               onChange={(e) => setNewEventName(e.target.value)}
                               placeholder="Event name"
-                              className="w-full p-3 rounded-xl bg-black border border-zinc-700 focus:border-orange-500 focus:outline-none text-white placeholder-gray-600 transition-all duration-300"
+                              className="w-full p-3 rounded-xl bg-black border border-zinc-700 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/30 focus:outline-none text-white placeholder-gray-600 transition-all duration-300 hover:border-orange-500/50"
                               required
                             />
                             <textarea
@@ -1170,14 +1179,14 @@ export default function AdminDashboard() {
                                 setNewEventDescription(e.target.value)
                               }
                               placeholder="Event description"
-                              className="w-full p-3 rounded-xl bg-black border border-zinc-700 focus:border-orange-500 focus:outline-none text-white placeholder-gray-600 transition-all duration-300 min-h-[80px]"
+                              className="w-full p-3 rounded-xl bg-black border border-zinc-700 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/30 focus:outline-none text-white placeholder-gray-600 transition-all duration-300 min-h-[80px] hover:border-orange-500/50"
                               required
                             />
                             <input
                               type="date"
                               value={newEventDate}
                               onChange={(e) => setNewEventDate(e.target.value)}
-                              className="w-full p-3 rounded-xl bg-black border border-zinc-700 focus:border-orange-500 focus:outline-none text-white transition-all duration-300"
+                              className="w-full p-3 rounded-xl bg-black border border-zinc-700 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/30 focus:outline-none text-white transition-all duration-300 hover:border-orange-500/50 cursor-pointer"
                               required
                             />
                             <input
@@ -1187,7 +1196,7 @@ export default function AdminDashboard() {
                                 setNewEventLocation(e.target.value)
                               }
                               placeholder="Location"
-                              className="w-full p-3 rounded-xl bg-black border border-zinc-700 focus:border-orange-500 focus:outline-none text-white placeholder-gray-600 transition-all duration-300"
+                              className="w-full p-3 rounded-xl bg-black border border-zinc-700 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/30 focus:outline-none text-white placeholder-gray-600 transition-all duration-300 hover:border-orange-500/50"
                               required
                             />
                             <div className="flex flex-col gap-2">
@@ -1201,7 +1210,7 @@ export default function AdminDashboard() {
                                   const file = e.target.files?.[0] || null;
                                   setNewEventPosterFile(file);
                                 }}
-                                className="w-full text-xs text-gray-300 file:mr-2 sm:file:mr-3 file:rounded-lg file:border-0 file:bg-orange-500 file:px-2 file:py-1.5 sm:file:px-3 sm:file:py-2 file:text-xs file:font-semibold file:text-black hover:file:bg-orange-600 cursor-pointer"
+                                className="w-full text-xs text-gray-300 file:mr-2 sm:file:mr-3 file:rounded-lg file:border-0 file:bg-gradient-to-r file:from-orange-500 file:to-orange-600 file:px-2 file:py-1.5 sm:file:px-3 sm:file:py-2 file:text-xs file:font-semibold file:text-black hover:file:from-orange-600 hover:file:to-orange-700 file:transition-all file:duration-300 cursor-pointer"
                               />
                               <div className="relative">
                                 <span className="text-xs text-gray-500 absolute left-3 -top-2 bg-zinc-900 px-1">
@@ -1215,13 +1224,13 @@ export default function AdminDashboard() {
                                   setNewEventPoster(e.target.value)
                                 }
                                 placeholder="Enter poster image URL"
-                                className="w-full p-3 rounded-xl bg-black border border-zinc-700 focus:border-orange-500 focus:outline-none text-white placeholder-gray-600 transition-all duration-300 text-sm"
+                                className="w-full p-3 rounded-xl bg-black border border-zinc-700 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/30 focus:outline-none text-white placeholder-gray-600 transition-all duration-300 text-sm hover:border-orange-500/50"
                               />
                             </div>
                             <button
                               type="submit"
                               disabled={isAddingEvent}
-                              className="w-full flex-shrink-0 py-3 px-6 bg-orange-500 text-black font-bold rounded-xl hover:bg-orange-600 transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+                              className="w-full flex-shrink-0 py-3 px-6 bg-gradient-to-r from-orange-500 to-orange-600 text-black font-bold rounded-xl hover:from-orange-600 hover:to-orange-700 hover:scale-105 hover:shadow-lg hover:shadow-orange-500/50 transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer active:scale-95"
                             >
                               <PlusIcon />
                               {isAddingEvent ? "Adding..." : "Add Event"}
@@ -1235,11 +1244,11 @@ export default function AdminDashboard() {
                             upcomingEvents.map((event) => (
                               <div
                                 key={event._id}
-                                className="flex flex-col bg-zinc-900 p-3 sm:p-4 rounded-lg gap-3 border border-zinc-800 hover:border-zinc-700 transition-colors"
+                                className="flex flex-col bg-gradient-to-br from-zinc-900 to-zinc-950 p-3 sm:p-4 rounded-lg gap-3 border border-zinc-800 hover:border-orange-500/50 hover:scale-105 hover:shadow-lg hover:shadow-orange-500/20 transition-all duration-300 group"
                               >
                                 <div className="flex justify-between items-start gap-2 sm:gap-3">
                                   <div className="flex-1 min-w-0">
-                                    <p className="font-bold text-white text-base sm:text-lg truncate">
+                                    <p className="font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent text-base sm:text-lg truncate group-hover:from-orange-200 group-hover:to-white transition-all duration-300">
                                       {event.name}
                                     </p>
                                     <p className="text-xs text-gray-400 mt-1">
@@ -1260,7 +1269,7 @@ export default function AdminDashboard() {
                                     onClick={() =>
                                       openDeleteModal(event._id, "event")
                                     }
-                                    className="p-2 rounded-lg text-red-500 hover:bg-red-500/10 transition-colors duration-200 cursor-pointer flex-shrink-0"
+                                    className="p-2 rounded-lg text-red-500 hover:bg-red-500/20 hover:scale-110 transition-all duration-200 cursor-pointer flex-shrink-0 active:scale-95"
                                   >
                                     <TrashIcon />
                                   </button>
@@ -1284,10 +1293,12 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          <div className="mt-16 text-center">
+          <div className="mt-16 text-center animate-in fade-in duration-700">
             <p className="text-xs text-gray-600">
               Powered by{" "}
-              <span className="font-bold text-orange-500">CN_CUIET</span>
+              <span className="font-bold bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
+                CN_CUIET
+              </span>
             </p>
           </div>
         </div>
