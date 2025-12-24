@@ -182,6 +182,7 @@ export default function NinjaRunnerGame({
   const [isGameOver, setIsGameOver] = useState(false);
   const [isPaused, setIsPaused] = useState(true);
   const [loseQuote, setLoseQuote] = useState<string | null>(null);
+  const [activeKey, setActiveKey] = useState<string | null>(null);
   const scoreRef = useRef<number>(0);
   const postedScoreRef = useRef<boolean>(false);
 
@@ -351,12 +352,27 @@ export default function NinjaRunnerGame({
   // Input handlers
   useEffect(() => {
     const onFlip = (e?: KeyboardEvent) => {
+      let isSpace = false;
+      let isArrowUp = false;
+      let isArrowDown = false;
+
       if (e instanceof KeyboardEvent) {
-        // Only respond to Space (or Spacebar on older browsers) and not when meta keys are used
-        const isSpace =
-          e.code === "Space" || e.key === " " || e.key === "Spacebar";
-        if (!isSpace) return;
+        // Accept Space, ArrowUp, or ArrowDown keys
+        isSpace = e.code === "Space" || e.key === " " || e.key === "Spacebar";
+        isArrowUp = e.code === "ArrowUp" || e.key === "ArrowUp";
+        isArrowDown = e.code === "ArrowDown" || e.key === "ArrowDown";
+
+        if (!isSpace && !isArrowUp && !isArrowDown) return;
         e.preventDefault();
+
+        // Update active key display
+        if (isSpace) {
+          setActiveKey("Space");
+        } else if (isArrowUp) {
+          setActiveKey("↑");
+        } else if (isArrowDown) {
+          setActiveKey("↓");
+        }
       }
       if (isGameOver) {
         // Restart on input when game over
@@ -371,7 +387,25 @@ export default function NinjaRunnerGame({
       }
       // Begin smooth flip animation
       const p = playerRef.current;
-      const nextUpsideDown = !p.isUpsideDown;
+      let nextUpsideDown: boolean;
+
+      // Determine target position based on key pressed
+      if (isArrowUp) {
+        // Arrow Up always goes to ceiling (upside down)
+        nextUpsideDown = true;
+      } else if (isArrowDown) {
+        // Arrow Down always goes to floor (normal)
+        nextUpsideDown = false;
+      } else {
+        // Space bar toggles position
+        nextUpsideDown = !p.isUpsideDown;
+      }
+
+      // Only animate if position is actually changing
+      if (p.isUpsideDown === nextUpsideDown) {
+        return;
+      }
+
       // Toggle orientation immediately for visual feedback
       p.isUpsideDown = nextUpsideDown;
       p.velocityY = 0;
@@ -382,6 +416,17 @@ export default function NinjaRunnerGame({
       flipElapsedRef.current = 0;
     };
 
+    const onKeyUp = (e: KeyboardEvent) => {
+      const isSpace =
+        e.code === "Space" || e.key === " " || e.key === "Spacebar";
+      const isArrowUp = e.code === "ArrowUp" || e.key === "ArrowUp";
+      const isArrowDown = e.code === "ArrowDown" || e.key === "ArrowDown";
+
+      if (isSpace || isArrowUp || isArrowDown) {
+        setActiveKey(null);
+      }
+    };
+
     const canvas = canvasRef.current;
     const handleClick = (ev: MouseEvent) => {
       ev.preventDefault();
@@ -390,11 +435,15 @@ export default function NinjaRunnerGame({
 
     // Use a typed keydown handler to avoid any casts
     const handleKeyDown = (ev: KeyboardEvent) => onFlip(ev);
+    const handleKeyUp = (ev: KeyboardEvent) => onKeyUp(ev);
+
     window.addEventListener("keydown", handleKeyDown, { passive: false });
+    window.addEventListener("keyup", handleKeyUp, { passive: false });
     canvas?.addEventListener("click", handleClick);
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
       canvas?.removeEventListener("click", handleClick);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1081,10 +1130,117 @@ export default function NinjaRunnerGame({
         )}
       </div>
 
+      {/* Real-time keypress display */}
+      {!isPaused && !isGameOver && (
+        <div
+          style={{
+            display: "flex",
+            gap: 8,
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: 8,
+            pointerEvents: "none",
+          }}
+        >
+          {/* Space key display */}
+          <div
+            style={{
+              padding: "6px 12px",
+              borderRadius: 6,
+              background:
+                activeKey === "Space"
+                  ? "rgba(56, 189, 248, 0.9)"
+                  : "rgba(0, 0, 0, 0.4)",
+              border:
+                activeKey === "Space"
+                  ? "2px solid rgba(56, 189, 248, 1)"
+                  : "1px solid rgba(255, 255, 255, 0.2)",
+              color: activeKey === "Space" ? "#fff" : "#cbd5e1",
+              fontSize: 12,
+              fontWeight: activeKey === "Space" ? 700 : 500,
+              fontFamily: "monospace",
+              transition: "all 0.1s ease",
+              transform: activeKey === "Space" ? "scale(1.1)" : "scale(1)",
+              boxShadow:
+                activeKey === "Space"
+                  ? "0 0 12px rgba(56, 189, 248, 0.6)"
+                  : "none",
+            }}
+          >
+            SPACE
+          </div>
+
+          {/* OR separator */}
+          <span
+            style={{
+              color: "#94a3b8",
+              fontSize: 11,
+              fontWeight: 600,
+              fontFamily: "monospace",
+            }}
+          >
+            OR
+          </span>
+
+          {/* Arrow Up key display */}
+          <div
+            style={{
+              padding: "6px 12px",
+              borderRadius: 6,
+              background:
+                activeKey === "↑"
+                  ? "rgba(56, 189, 248, 0.9)"
+                  : "rgba(0, 0, 0, 0.4)",
+              border:
+                activeKey === "↑"
+                  ? "2px solid rgba(56, 189, 248, 1)"
+                  : "1px solid rgba(255, 255, 255, 0.2)",
+              color: activeKey === "↑" ? "#fff" : "#cbd5e1",
+              fontSize: 14,
+              fontWeight: activeKey === "↑" ? 700 : 500,
+              fontFamily: "monospace",
+              transition: "all 0.1s ease",
+              transform: activeKey === "↑" ? "scale(1.1)" : "scale(1)",
+              boxShadow:
+                activeKey === "↑" ? "0 0 12px rgba(56, 189, 248, 0.6)" : "none",
+            }}
+          >
+            ↑
+          </div>
+
+          {/* Arrow Down key display */}
+          <div
+            style={{
+              padding: "6px 12px",
+              borderRadius: 6,
+              background:
+                activeKey === "↓"
+                  ? "rgba(56, 189, 248, 0.9)"
+                  : "rgba(0, 0, 0, 0.4)",
+              border:
+                activeKey === "↓"
+                  ? "2px solid rgba(56, 189, 248, 1)"
+                  : "1px solid rgba(255, 255, 255, 0.2)",
+              color: activeKey === "↓" ? "#fff" : "#cbd5e1",
+              fontSize: 14,
+              fontWeight: activeKey === "↓" ? 700 : 500,
+              fontFamily: "monospace",
+              transition: "all 0.1s ease",
+              transform: activeKey === "↓" ? "scale(1.1)" : "scale(1)",
+              boxShadow:
+                activeKey === "↓" ? "0 0 12px rgba(56, 189, 248, 0.6)" : "none",
+            }}
+          >
+            ↓
+          </div>
+        </div>
+      )}
+
       {/* Optional: small caption/help for a11y outside canvas */}
       {showCaption && (
         <div style={{ fontSize: 12, color: "#64748b", marginTop: 4 }}>
-          Click or press Space to flip gravity. Avoid red blocks.
+          Click or press Space/Arrow Up/Arrow Down to flip gravity. Avoid red
+          blocks.
         </div>
       )}
     </div>
